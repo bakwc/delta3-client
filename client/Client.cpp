@@ -1,11 +1,11 @@
-#include "Client.h"
+﻿#include "Client.h"
 #include <iostream>
 #include <QCryptographicHash>
 #include <QTime>
 #include <QRegExp>
 Client::Client(QObject *parent) :
     QObject(parent),
-    port(1234),
+    port(31337),
     server(QHostAddress::LocalHost)
 {
     // Добавялем первый протокол
