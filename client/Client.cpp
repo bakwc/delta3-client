@@ -140,5 +140,5 @@ void Client::activateDeactivateProtocol(QString incoming)
 
 void Client::slotDataOnStdout(){
     QString output = firstprotocol->readAllStandardOutput();
-    socket->write(qPrintable(QString("1:%1:%2:").arg(output.size()).arg(output));
+    socket->write(qPrintable(QString("1:%1:%2:").arg(output.size()).arg(output)));
 }
