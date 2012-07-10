@@ -79,11 +79,6 @@ void Client::sortIncomingData()
     }
 }
 
-void Client::parseSomeInformation(QString incoming)
-{
-
-}
-
 void Client::parseFirstProtocol(qint32 adminId, QString incoming)
 {
     // Не шарю в решулярках, наверно что-то не так,
