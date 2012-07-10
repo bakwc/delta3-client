@@ -58,30 +58,24 @@ void Client::sortIncomingData()
 
         //берем хидер даты и отдаем дату нужному парсеру
         QRegExp re = QRegExp("(\\w+):");
-        qDebug() << re.indexIn(data);
-        if(re.indexIn(data)!=-1){
-            QString dataHeader = re.cap(1);
 
-            //1 = one
-            if(dataHeader == "1"){
+        if(re.indexIn(data) != -1){
+            quint32 dataHeader = re.cap(1).at(0).toAscii();
+
+            switch(dataHeader){
+            case '1':
                 parseFirstProtocol(rx.cap(1).toInt(), data);
-                return;
-            }
-
-            // l = L
-            if(dataHeader == "l"){
-                qDebug() << rx.cap(2).toInt();
+                break;
+            case 'l':
                 sendAvailableProtocols(rx.cap(1).toInt());
-                return;
-            }
-
-            if(dataHeader == "a" || dataHeader == "d"){
+                break;
+            case 'a':
+            case 'd':
                 activateDeactivateProtocol(rx.cap(1).toInt(), data);
-                return;
+                break;
             }
         }
         return;
-
     }
 }
 
