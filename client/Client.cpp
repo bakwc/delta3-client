@@ -46,47 +46,57 @@ void Client::onDisconnect()
 
 void Client::sortIncomingData()
 {
-    QRegExp rx = QRegExp("(\\w+):");
-
+    QRegExp rx("f:(\\d+):(\\d+):(.*)");
     QString incoming = socket->readAll();
-    rx.indexIn(incoming);
-    if(rx.captureCount()!=-1){
-        QString header = rx.cap(1);
-        if(header == "t"){
-            parseSomeInformation(incoming);
-            return;
-        }
+    qDebug() << incoming;
 
-        // 1 - one
-        if(header == "1"){
-            parseFirstProtocol(incoming);
-            return;
-        }
+    // Проверяем запрос
+    if(rx.indexIn(incoming)!=-1){
 
-        // l = L
-        if(header == "l"){
-            sendAvailableProtocols();
-            return;
-        }
+        // Берём в data дату из запроса
+        QString data = rx.cap(3);
 
-        if(header == "a" || header == "d"){
-            activateDeactivateProtocol(incoming);
-            return;
+        //берем хидер даты и отдаем дату нужному парсеру
+        QRegExp re = QRegExp("(\\w+):");
+        qDebug() << re.indexIn(data);
+        if(re.indexIn(data)!=-1){
+            QString dataHeader = re.cap(1);
+
+            //1 = one
+            if(dataHeader == "1"){
+                parseFirstProtocol(rx.cap(1).toInt(), data);
+                return;
+            }
+
+            // l = L
+            if(dataHeader == "l"){
+                qDebug() << rx.cap(2).toInt();
+                sendAvailableProtocols(rx.cap(1).toInt());
+                return;
+            }
+
+            if(dataHeader == "a" || dataHeader == "d"){
+                activateDeactivateProtocol(rx.cap(1).toInt(), data);
+                return;
+            }
         }
+        return;
+
     }
 }
 
 void Client::parseSomeInformation(QString incoming)
 {
+
 }
 
-void Client::parseFirstProtocol(QString incoming)
+void Client::parseFirstProtocol(qint32 adminId, QString incoming)
 {
     // Не шарю в решулярках, наверно что-то не так,
     // но худо-бедно работает
-    QRegExp rx = QRegExp("(\\w):(\\w+):");
+    QRegExp rx = QRegExp("1:(\\w+):(\\w+):");
     rx.indexIn(incoming);
-    qDebug() << rx.cap(2);
+    qDebug() << rx.indexIn(incoming);
 
     // Если команда протоколу правильная
     // и протокол запущен
@@ -96,7 +106,7 @@ void Client::parseFirstProtocol(QString incoming)
         firstprotocol->write(qPrintable(QString("%1\n").arg(rx.cap(2))));
 }
 
-void Client::sendAvailableProtocols()
+void Client::sendAvailableProtocols(qint32 adminId)
 {
     // Крайне криво на мой вгляд.
     // Нужно упростить.
@@ -108,17 +118,19 @@ void Client::sendAvailableProtocols()
     }
     protocols.append(":");
     qDebug() << protocols;
-    socket->write(qPrintable(protocols));
+    sendData(adminId, qPrintable(protocols));
 }
 
-void Client::activateDeactivateProtocol(QString incoming)
+void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
 {
     // Я не до конца разбираюсь в регулярках
     // поэтому тут все совсем глупо
     QRegExp rx = QRegExp("(\\w):(\\d+):");
     rx.indexIn(incoming);
-    QString mode= rx.cap(1);
+    qDebug() << "active";
+    QString mode = rx.cap(1);
     QString proto = rx.cap(2);
+    this->adminId = adminId;
     if(mode=="a"){
         if(proto == "1"){
             firstprotocol = new QProcess(this);
@@ -138,7 +150,12 @@ void Client::activateDeactivateProtocol(QString incoming)
 
 }
 
+void Client::sendData(qint32 adminId, QString data)
+{
+    socket->write(qPrintable(QString("t:%1:%2:%3").arg(adminId).arg(data.size()-1).arg(data)));
+}
+
 void Client::slotDataOnStdout(){
     QString output = firstprotocol->readAllStandardOutput();
-    socket->write(qPrintable(QString("1:%1:%2:").arg(output.size()).arg(output)));
+    sendData(this->adminId, QString("1:%1:%2:").arg(output.size()).arg(output));
 }

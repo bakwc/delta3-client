@@ -23,22 +23,26 @@ private:
 
     // Обработка 1: сообщений.
     // Сделал только консоль cmd
-    void parseFirstProtocol(QString incoming);
+    void parseFirstProtocol(qint32 adminId, QString incoming);
 
     // Обработка l: сообшений.
     // Шлет на сервер доступные протоколы
-    void sendAvailableProtocols();
+    void sendAvailableProtocols(qint32 adminId);
 
     // Обработка a: и d: сообщений.
     // a:1: и d:1: работают,
     // но очень слабая реализация
-    void activateDeactivateProtocol(QString incoming);
+    void activateDeactivateProtocol(qint32 adminId, QString incoming);
 
     // Через этот процесс работает 1 протокол
     QProcess * firstprotocol;
 
     // Список доступных протоколов
     QVector<int> availableProtocols;
+
+    // Послать дату в формате согласным с протоколом
+    void sendData(qint32 adminId, QString data);
+    qint32 adminId;
     
 public slots:
 
