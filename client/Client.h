@@ -18,9 +18,6 @@ private:
     quint16 port;
     QHostAddress server;
 
-    // Обработка t: сообщений не начинал
-    void parseSomeInformation(QString incoming);
-
     // Обработка 1: сообщений.
     // Сделал только консоль cmd
     void parseFirstProtocol(qint32 adminId, QString incoming);
