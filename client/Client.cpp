@@ -51,7 +51,7 @@ void Client::sortIncomingData()
     qDebug() << incoming;
 
     // Проверяем запрос
-    if(rx.indexIn(incoming)!=-1){
+    if(rx.indexIn(incoming) != -1){
 
         // Берём в data дату из запроса
         QString data = rx.cap(3);
@@ -96,7 +96,7 @@ void Client::parseFirstProtocol(qint32 adminId, QString incoming)
     // и протокол запущен
     // отправить запрос в первый протокол
     // в данном случае в консоль винды
-    if(rx.captureCount() != -1 && firstprotocol->Running)
+    if((rx.captureCount() != -1) && firstprotocol->Running)
         firstprotocol->write(qPrintable(QString("%1\n").arg(rx.cap(2))));
 }
 
