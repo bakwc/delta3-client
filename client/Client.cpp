@@ -34,7 +34,7 @@ Client::Client(QObject *parent) :
 
 void Client::onConnect()
 {
-    QString time = QTime::currentTime().msec();
+    QString time = QString("%1").arg( QTime::currentTime().msec() );
     QString md5hash = QString(QCryptographicHash::hash((qPrintable(time)), QCryptographicHash::Md5).toHex());
     socket->write(qPrintable(QString("cspycli:1:%1:").arg(md5hash)));
 }
