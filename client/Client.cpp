@@ -5,7 +5,7 @@
 #include <QRegExp>
 Client::Client(QObject *parent) :
     QObject(parent),
-    port(31337),
+    port(1235),
     server(QHostAddress::LocalHost)
 {
     // Добавялем первый протокол
