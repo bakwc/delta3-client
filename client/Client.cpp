@@ -123,8 +123,21 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
     if(mode=="a"){
         if(proto == "1"){
             firstprotocol = new QProcess(this);
+#ifdef Q_WS_X11
+            firstprotocol->start("bash");
+#endif
 
+#ifdef Q_WS_MAC
+            firstprotocol->start("bin/bash");
+#endif
+
+#ifdef Q_WS_QWS
+            firstprotocol->start("bash");
+#endif
+
+#ifdef Q_WS_WIN
             firstprotocol->start("cmd");
+#endif
             connect(firstprotocol,
                     SIGNAL(readyReadStandardOutput()),
                     this,
