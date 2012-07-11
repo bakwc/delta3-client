@@ -47,7 +47,7 @@ void Client::onDisconnect()
 void Client::sortIncomingData()
 {
     QRegExp rx("f:(\\d+):(\\d+):(.*)");
-    QString incoming = socket->readAll();
+    QString incoming = QString::fromLocal8Bit(socket->readAll());
     qDebug() << incoming;
 
     // Проверяем запрос
@@ -154,10 +154,12 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
 
 void Client::sendData(qint32 adminId, QString data)
 {
-    socket->write(qPrintable(QString("t:%1:%2:%3").arg(adminId).arg(data.size()-1).arg(data)));
+    QString gogo = QString("t:%1:%2:%3").arg(adminId).arg(data.size()-1).arg(data);
+    qDebug() << gogo;
+    socket->write(gogo.toLocal8Bit());
 }
 
 void Client::slotDataOnStdout(){
-    QString output = firstprotocol->readAllStandardOutput();
+    QString output = QString::fromLocal8Bit(firstprotocol->readAllStandardOutput());
     sendData(this->adminId, QString("1:%1:%2:").arg(output.size()).arg(output));
 }
