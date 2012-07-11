@@ -1,10 +1,11 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#pragma once
 #include <QObject>
 #include <QCoreApplication>
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QProcess>
+#include <QByteArray>
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -61,5 +62,3 @@ public slots:
     // Запускаеться при выводе 1 протокола
     void slotDataOnStdout();
 };
-
-#endif // CLIENT_H
