@@ -1,0 +1,17 @@
+# .gitignore
+
+client-*/
+client/debug*/
+client/release*/
+
+ui_*.h
+*.qm
+
+Makefile*
+*.user*
+
+*.bak
+*.tmp
+*~
+
+*.autosave
