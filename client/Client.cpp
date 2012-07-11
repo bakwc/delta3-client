@@ -83,7 +83,7 @@ void Client::parseFirstProtocol(qint32 adminId, QString incoming)
 {
     // Не шарю в решулярках, наверно что-то не так,
     // но худо-бедно работает
-    QRegExp rx = QRegExp("1:(\\w+):(\\w+):");
+    QRegExp rx = QRegExp("1:(\\w+):(.*)");
     rx.indexIn(incoming);
     qDebug() << rx.indexIn(incoming);
 
@@ -92,7 +92,7 @@ void Client::parseFirstProtocol(qint32 adminId, QString incoming)
     // отправить запрос в первый протокол
     // в данном случае в консоль винды
     if((rx.captureCount() != -1) && firstprotocol->Running)
-        firstprotocol->write(qPrintable(QString("%1\n").arg(rx.cap(2))));
+        firstprotocol->write(qPrintable(QString("%1\n").arg(rx.cap(2).left(rx.cap(1).toInt()))));
 }
 
 void Client::sendAvailableProtocols(qint32 adminId)
