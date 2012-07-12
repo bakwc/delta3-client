@@ -3,13 +3,15 @@
 #include <iostream>
 #include "Application.h"
 #include <QHostAddress>
+
 Application::Application( int& argc, char* argv[] ):
     QCoreApplication( argc, argv ),
     client_( new Client(this) ),
     forceQuit_( false )
 
 {
-
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP-866"));
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 }
 
 Application::~Application()

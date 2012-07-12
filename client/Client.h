@@ -39,7 +39,7 @@ private:
     QVector<int> availableProtocols;
 
     // Послать дату в формате согласным с протоколом
-    void sendData(qint32 adminId, QString data);
+    void sendData(qint32 adminId, const QByteArray &data);
     
     // Здесь хранится айди админа, который активировал
     // один из протоколов 3 уровня. TODO: Исправить на N админов.

@@ -152,14 +152,15 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
 
 }
 
-void Client::sendData(qint32 adminId, QString data)
+void Client::sendData(qint32 adminId, const QByteArray& data)
 {
-    QString gogo = QString("t:%1:%2:%3").arg(adminId).arg(data.size()-1).arg(data);
-    qDebug() << gogo;
-    socket->write(gogo.toLocal8Bit());
+    QByteArray gogo = (QString("t:%1:%2:").arg(adminId).arg(data.size()))
+            .toUtf8() + data;
+    socket->write(gogo);
 }
 
 void Client::slotDataOnStdout(){
     QString output = QString::fromLocal8Bit(firstprotocol->readAllStandardOutput());
-    sendData(this->adminId, QString("1:%1:%2:").arg(output.size()).arg(output));
+    QByteArray data=(QString("1:%1:%2:").arg(output.size()).arg(output)).toUtf8();
+    sendData(this->adminId, data);
 }

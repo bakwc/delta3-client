@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QCoreApplication>
+#include <QTextCodec>
 #include "Client.h"
+
 class Application : public QCoreApplication
 {
     Q_OBJECT
