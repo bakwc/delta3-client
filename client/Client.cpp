@@ -9,7 +9,7 @@ Client::Client(QObject *parent) :
     server(QHostAddress::LocalHost)
 {
     // Добавялем первый протокол
-    availableProtocols.push_back(1);
+    availableProtocols.push_back(MOD_TELNET);
 
     qDebug() << server << port;
     socket = new QTcpSocket(this);
@@ -91,8 +91,8 @@ void Client::parseFirstProtocol(qint32 adminId, QString incoming)
     // и протокол запущен
     // отправить запрос в первый протокол
     // в данном случае в консоль винды
-    if((rx.captureCount() != -1) && firstprotocol->Running)
-        firstprotocol->write(qPrintable(QString("%1\n").arg(rx.cap(2).left(rx.cap(1).toInt()))));
+    if((rx.captureCount() != -1) && telnetProcess->Running)
+        telnetProcess->write(qPrintable(QString("%1\n").arg(rx.cap(2).left(rx.cap(1).toInt()))));
 }
 
 void Client::sendAvailableProtocols(qint32 adminId)
@@ -114,15 +114,21 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
 {
     // Я не до конца разбираюсь в регулярках
     // поэтому тут все совсем глупо
-    QRegExp rx = QRegExp("(\\w):(\\d+):");
-    rx.indexIn(incoming);
-    qDebug() << "active";
-    QString mode = rx.cap(1);
-    QString proto = rx.cap(2);
+    QRegExp rx = QRegExp("(\\w+):(\\d+):");
+    if (rx.indexIn(incoming)==-1)
+        return;
+
+    qDebug() << "activateDeactivateProtocol()";
+
+    ActivationMode mode;
+    if (rx.cap(1) == "a") mode=ACT_ACTIVATE;
+    else if (rx.cap(1) == "d") mode=ACT_DEACTIVATE;
+    ProtocolMode proto = (ProtocolMode)rx.cap(2).toInt();
     this->adminId = adminId;
-    if(mode=="a"){
-        if(proto == "1"){
-            firstprotocol = new QProcess(this);
+
+    if (mode == ACT_ACTIVATE){
+        if (proto == MOD_TELNET){
+            telnetProcess = new QProcess(this);
 #ifdef Q_WS_X11
             firstprotocol->start("bash");
 #endif
@@ -136,9 +142,9 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
 #endif
 
 #ifdef Q_WS_WIN
-            firstprotocol->start("cmd");
+            telnetProcess->start("cmd");
 #endif
-            connect(firstprotocol,
+            connect(telnetProcess,
                     SIGNAL(readyReadStandardOutput()),
                     this,
                     SLOT(slotDataOnStdout())
@@ -146,8 +152,8 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
         }
     }
     else {
-        firstprotocol->disconnect(this);
-        firstprotocol->close();
+        telnetProcess->disconnect(this);
+        telnetProcess->close();
     }
 
 }
@@ -160,7 +166,7 @@ void Client::sendData(qint32 adminId, const QByteArray& data)
 }
 
 void Client::slotDataOnStdout(){
-    QString output = QString::fromLocal8Bit(firstprotocol->readAllStandardOutput());
+    QString output = QString::fromLocal8Bit(telnetProcess->readAllStandardOutput());
     QByteArray data=(QString("1:%1:%2:").arg(output.size()).arg(output)).toUtf8();
     sendData(this->adminId, data);
 }

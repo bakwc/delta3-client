@@ -5,6 +5,7 @@
 #include <QHostAddress>
 #include <QProcess>
 #include <QByteArray>
+#include "defines.h"
 
 class Client : public QObject
 {
@@ -33,10 +34,10 @@ private:
     void activateDeactivateProtocol(qint32 adminId, QString incoming);
 
     // Через этот процесс работает 1 протокол
-    QProcess * firstprotocol;
+    QProcess * telnetProcess;
 
     // Список доступных протоколов
-    QVector<int> availableProtocols;
+    QVector<ProtocolMode> availableProtocols;
 
     // Послать дату в формате согласным с протоколом
     void sendData(qint32 adminId, const QByteArray &data);
