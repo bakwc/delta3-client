@@ -22,16 +22,16 @@ private:
 
     // Обработка 1: сообщений.
     // Сделал только консоль cmd
-    void parseFirstProtocol(qint32 adminId, QString incoming);
+    void parseFirstProtocol(qint32 adminId, const QByteArray &data);
 
     // Обработка l: сообшений.
     // Шлет на сервер доступные протоколы
-    void sendAvailableProtocols(qint32 adminId);
+    void sendAvailableProtocols(qint32 adminId, const QByteArray &data);
 
     // Обработка a: и d: сообщений.
     // a:1: и d:1: работают,
     // но очень слабая реализация
-    void activateDeactivateProtocol(qint32 adminId, QString incoming);
+    void activateDeactivateProtocol(qint32 adminId, const QByteArray &incoming);
 
     // Через этот процесс работает 1 протокол
     QProcess * telnetProcess;

@@ -47,58 +47,54 @@ void Client::onDisconnect()
 void Client::sortIncomingData()
 {
     QRegExp rx("f:(\\d+):(\\d+):(.*)");
-    QString incoming = QString::fromLocal8Bit(socket->readAll());
-    qDebug() << incoming;
+    QByteArray incoming = socket->readAll();
+    qDebug() << QString::fromUtf8(incoming);
 
     // Проверяем запрос
-    if(rx.indexIn(incoming) != -1){
-
-        // Берём в data дату из запроса
-        QString data = rx.cap(3);
-
-        //берем хидер даты и отдаем дату нужному парсеру
-        QRegExp re = QRegExp("(\\w+):");
-
-        if(re.indexIn(data) != -1){
-            quint32 dataHeader = re.cap(1).at(0).toAscii();
-
-            switch(dataHeader){
-            case '1':
-                parseFirstProtocol(rx.cap(1).toInt(), data);
-                break;
-            case 'l':
-                sendAvailableProtocols(rx.cap(1).toInt());
-                break;
-            case 'a':
-            case 'd':
-                activateDeactivateProtocol(rx.cap(1).toInt(), data);
-                break;
-            }
-        }
+    if(rx.indexIn(incoming) == -1)
         return;
-    }
+
+    qDebug() << "sortIncomingData()";
+
+    // Берём в data дату из запроса
+    QByteArray data = rx.cap(3).toUtf8();
+    qint32 clientId = rx.cap(1).toInt();
+
+    qDebug() << QString::fromUtf8(data);
+
+    parseFirstProtocol(clientId, data);
+    sendAvailableProtocols(clientId, data);
+    activateDeactivateProtocol(clientId, data);
+
 }
 
-void Client::parseFirstProtocol(qint32 adminId, QString incoming)
+void Client::parseFirstProtocol(qint32 adminId, const QByteArray& data)
 {
     // Не шарю в решулярках, наверно что-то не так,
     // но худо-бедно работает
     QRegExp rx = QRegExp("1:(\\w+):(.*)");
-    rx.indexIn(incoming);
-    qDebug() << rx.indexIn(incoming);
+    if (rx.indexIn(data)==-1)
+        return;
+
+    qDebug() << "parseFirstProtocol()";
 
     // Если команда протоколу правильная
     // и протокол запущен
     // отправить запрос в первый протокол
     // в данном случае в консоль винды
     if((rx.captureCount() != -1) && telnetProcess->Running)
-        telnetProcess->write(qPrintable(QString("%1\n").arg(rx.cap(2).left(rx.cap(1).toInt()))));
+        telnetProcess->write(qPrintable(QString("%1\n")
+                           .arg(rx.cap(2).left(rx.cap(1).toInt()))));
 }
 
-void Client::sendAvailableProtocols(qint32 adminId)
+void Client::sendAvailableProtocols(qint32 adminId, const QByteArray& data)
 {
     // Крайне криво на мой вгляд.
     // Нужно упростить.
+    QRegExp rx = QRegExp("^l:");
+    if (rx.indexIn(data)==-1)
+        return;
+
     QString protocols = "m:";
     for(short i = 0; i < availableProtocols.size(); ++i){
         protocols.append(QString::number(availableProtocols.at(i)));
@@ -110,19 +106,20 @@ void Client::sendAvailableProtocols(qint32 adminId)
     sendData(adminId, qPrintable(protocols));
 }
 
-void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
+void Client::activateDeactivateProtocol(qint32 adminId, const QByteArray& incoming)
 {
-    // Я не до конца разбираюсь в регулярках
-    // поэтому тут все совсем глупо
-    QRegExp rx = QRegExp("(\\w+):(\\d+):");
+    QRegExp rx = QRegExp("(\\w):(\\d+):");
     if (rx.indexIn(incoming)==-1)
         return;
-
-    qDebug() << "activateDeactivateProtocol()";
 
     ActivationMode mode;
     if (rx.cap(1) == "a") mode=ACT_ACTIVATE;
     else if (rx.cap(1) == "d") mode=ACT_DEACTIVATE;
+    else
+        return; // If not activate or deactivate - exit
+
+     qDebug() << "activateDeactivateProtocol()";
+
     ProtocolMode proto = (ProtocolMode)rx.cap(2).toInt();
     this->adminId = adminId;
 
@@ -151,7 +148,7 @@ void Client::activateDeactivateProtocol(qint32 adminId, QString incoming)
                     );
         }
     }
-    else {
+    else if (mode == ACT_DEACTIVATE) {
         telnetProcess->disconnect(this);
         telnetProcess->close();
     }
