@@ -6,8 +6,6 @@
 
 QT       += core network
 
-QT       -= gui
-
 TARGET = client
 CONFIG   += console
 CONFIG   -= app_bundle
@@ -17,9 +15,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     Client.cpp \
-    Application.cpp
+    Application.cpp \
+    mod_telnet.cpp \
+    mod_graph.cpp
 
 HEADERS += \
     Client.h \
     Application.h \
-    defines.h
+    defines.h \
+    mod_telnet.h \
+    mod_graph.h

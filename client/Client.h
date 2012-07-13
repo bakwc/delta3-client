@@ -6,7 +6,9 @@
 #include <QProcess>
 #include <QByteArray>
 #include "defines.h"
-
+#include "mod_telnet.h"
+#include "mod_graph.h"
+#include <QMap>
 class Client : public QObject
 {
     Q_OBJECT
@@ -19,10 +21,12 @@ private:
     QTcpSocket * socket;
     quint16 port;
     QHostAddress server;
+    QMap < qint32, mod_telnet* > test1;
+    QMap < qint32, mod_graph* > test2;
 
     // Обработка 1: сообщений.
     // Сделал только консоль cmd
-    void parseFirstProtocol(qint32 adminId, const QByteArray &data);
+    void parseProtocolsMessages(qint32 adminId, const QByteArray &data);
 
     // Обработка l: сообшений.
     // Шлет на сервер доступные протоколы
@@ -33,20 +37,14 @@ private:
     // но очень слабая реализация
     void activateDeactivateProtocol(qint32 adminId, const QByteArray &incoming);
 
-    // Через этот процесс работает 1 протокол
-    QProcess * telnetProcess;
-
     // Список доступных протоколов
     QVector<ProtocolMode> availableProtocols;
 
-    // Послать дату в формате согласным с протоколом
-    void sendData(qint32 adminId, const QByteArray &data);
-    
-    // Здесь хранится айди админа, который активировал
-    // один из протоколов 3 уровня. TODO: Исправить на N админов.
-    qint32 adminId;
     
 public slots:
+
+    // Послать дату в формате согласным с протоколом
+    void sendData(qint32 adminId, QByteArray &data);
 
     // Запускаеться при коннекте к мастер-серверу, пока
     // генериться простой md5 (из QTime::currentTime().msec())
@@ -60,6 +58,4 @@ public slots:
     // и кидает необходимому обработчику
     void sortIncomingData();
 
-    // Запускаеться при выводе 1 протокола
-    void slotDataOnStdout();
 };

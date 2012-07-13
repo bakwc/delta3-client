@@ -1,4 +1,6 @@
 ﻿#include "Client.h"
+#include "mod_telnet.h"
+#include "mod_graph.h"
 #include <iostream>
 #include <QCryptographicHash>
 #include <QTime>
@@ -10,7 +12,7 @@ Client::Client(QObject *parent) :
 {
     // Добавялем первый протокол
     availableProtocols.push_back(MOD_TELNET);
-
+   // availableProtocols.push_back(MOD_GRAPH);
     qDebug() << server << port;
     socket = new QTcpSocket(this);
 
@@ -62,29 +64,27 @@ void Client::sortIncomingData()
 
     qDebug() << QString::fromUtf8(data);
 
-    parseFirstProtocol(clientId, data);
+    parseProtocolsMessages(clientId, data);
     sendAvailableProtocols(clientId, data);
     activateDeactivateProtocol(clientId, data);
 
 }
 
-void Client::parseFirstProtocol(qint32 adminId, const QByteArray& data)
+void Client::parseProtocolsMessages(qint32 adminId, const QByteArray& data)
 {
-    // Не шарю в решулярках, наверно что-то не так,
-    // но худо-бедно работает
-    QRegExp rx = QRegExp("1:(\\w+):(.*)");
-    if (rx.indexIn(data)==-1)
+    QRegExp rx = QRegExp("(\\d+):(\\d):(.*)");
+    if(rx.indexIn(data) == -1)
         return;
 
-    qDebug() << "parseFirstProtocol()";
+    switch(rx.cap(1).toInt()){
+    case MOD_TELNET : test1.find(adminId).value()->
+                incomeMessage(rx.cap(3).left(rx.cap(2).toInt()).toLocal8Bit());
+        break;
 
-    // Если команда протоколу правильная
-    // и протокол запущен
-    // отправить запрос в первый протокол
-    // в данном случае в консоль винды
-    if((rx.captureCount() != -1) && telnetProcess->Running)
-        telnetProcess->write(qPrintable(QString("%1\n")
-                           .arg(rx.cap(2).left(rx.cap(1).toInt()))));
+    case MOD_GRAPH  : test2.find(adminId).value()->
+                incomeMessage(rx.cap(3).left(rx.cap(2).toInt()).toLocal8Bit());
+        break;
+    }
 }
 
 void Client::sendAvailableProtocols(qint32 adminId, const QByteArray& data)
@@ -92,18 +92,18 @@ void Client::sendAvailableProtocols(qint32 adminId, const QByteArray& data)
     // Крайне криво на мой вгляд.
     // Нужно упростить.
     QRegExp rx = QRegExp("^l:");
-    if (rx.indexIn(data)==-1)
+    if (rx.indexIn(data) == -1)
         return;
 
     QString protocols = "m:";
     for(short i = 0; i < availableProtocols.size(); ++i){
         protocols.append(QString::number(availableProtocols.at(i)));
-        if(i < availableProtocols.size()-1)
+        if(i < availableProtocols.size() - 1)
             protocols.append(";");
     }
     protocols.append(":");
     qDebug() << protocols;
-    sendData(adminId, qPrintable(protocols));
+    sendData(adminId, protocols.toLocal8Bit());
 }
 
 void Client::activateDeactivateProtocol(qint32 adminId, const QByteArray& incoming)
@@ -113,57 +113,64 @@ void Client::activateDeactivateProtocol(qint32 adminId, const QByteArray& incomi
         return;
 
     ActivationMode mode;
-    if (rx.cap(1) == "a") mode=ACT_ACTIVATE;
-    else if (rx.cap(1) == "d") mode=ACT_DEACTIVATE;
+    if (rx.cap(1) == "a") mode = ACT_ACTIVATE;
+    else if (rx.cap(1) == "d") mode = ACT_DEACTIVATE;
     else
         return; // If not activate or deactivate - exit
 
-     qDebug() << "activateDeactivateProtocol()";
+    qDebug() << "activateDeactivateProtocol()";
 
     ProtocolMode proto = (ProtocolMode)rx.cap(2).toInt();
-    this->adminId = adminId;
 
     if (mode == ACT_ACTIVATE){
-        if (proto == MOD_TELNET){
-            telnetProcess = new QProcess(this);
-#ifdef Q_WS_X11
-            firstprotocol->start("bash");
-#endif
+        switch(proto){
 
-#ifdef Q_WS_MAC
-            firstprotocol->start("bin/bash");
-#endif
-
-#ifdef Q_WS_QWS
-            firstprotocol->start("bash");
-#endif
-
-#ifdef Q_WS_WIN
-            telnetProcess->start("cmd");
-#endif
-            connect(telnetProcess,
-                    SIGNAL(readyReadStandardOutput()),
+        case MOD_TELNET :{
+            mod_telnet * newone = new mod_telnet(this, adminId);
+            connect(newone,
+                    SIGNAL(messageReadyRead(qint32, QByteArray&)),
                     this,
-                    SLOT(slotDataOnStdout())
+                    SLOT(sendData(qint32, QByteArray&))
                     );
+            test1.insert(adminId, newone);
+            break;
         }
+
+        case MOD_GRAPH :{
+            mod_graph * newone = new mod_graph(this, adminId);
+            connect(newone,
+                    SIGNAL(messageReadyRead(qint32,QByteArray&)),
+                    this,
+                    SLOT(sendData(qint32,QByteArray&)));
+            test2.insert(adminId, newone);
+            break;
+        }
+        }
+
     }
     else if (mode == ACT_DEACTIVATE) {
-        telnetProcess->disconnect(this);
-        telnetProcess->close();
+        switch(proto){
+        case MOD_TELNET :
+            test1.find(adminId).value()->close();
+            delete test1.find(adminId).value();
+            test1.remove(adminId);
+            break;
+
+        case MOD_GRAPH :
+            test2.find(adminId).value()->close();
+            delete test2.find(adminId).value();
+            test2.remove(adminId);
+            break;
+        }
+
+
     }
 
 }
 
-void Client::sendData(qint32 adminId, const QByteArray& data)
+void Client::sendData(qint32 adminId, QByteArray &data)
 {
     QByteArray gogo = (QString("t:%1:%2:").arg(adminId).arg(data.size()))
             .toUtf8() + data;
     socket->write(gogo);
-}
-
-void Client::slotDataOnStdout(){
-    QString output = QString::fromLocal8Bit(telnetProcess->readAllStandardOutput());
-    QByteArray data=(QString("1:%1:%2:").arg(output.size()).arg(output)).toUtf8();
-    sendData(this->adminId, data);
 }
