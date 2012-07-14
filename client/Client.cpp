@@ -217,9 +217,9 @@ namespace delta3
             case MOD_TELNET :{
                 mod_telnet * newone = new mod_telnet(this, adminId);
                 connect(newone,
-                        SIGNAL(messageReadyRead(ProtocolMode, qint16, QByteArray&)),
+                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
                         this,
-                        SLOT(sendData3(ProtocolMode, qint16, QByteArray&))
+                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
                         );
                 test1.insert(adminId, newone);
                 break;
@@ -228,7 +228,7 @@ namespace delta3
             case MOD_GRAPH :{
                 mod_graph * newone = new mod_graph(this, adminId);
                 connect(newone,
-                        SIGNAL(messageReadyRead(ProtocolMode, qint16, QByteArray&)),
+                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
                         this,
                         SLOT(sendData3(ProtocolMode, qint16, QByteArray&))
                         );
@@ -259,7 +259,7 @@ namespace delta3
         }
     }
 
-    void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray &data)
+    void Client::sendData3(ProtocolMode mode, qint16 adminId, const QByteArray &data)
     {
         QByteArray buf;
         buf.append(CSPYP2_PROTOCOL_ID);

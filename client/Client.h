@@ -101,7 +101,7 @@ namespace delta3
     public slots:
 
 
-        void sendData3(ProtocolMode mode, qint16 adminId, QByteArray &data);
+        void sendData3(ProtocolMode mode, qint16 adminId, const QByteArray &data);
 
         // Запускаеться при коннекте к мастер-серверу, пока
         // генериться простой md5 (из QTime::currentTime().msec())

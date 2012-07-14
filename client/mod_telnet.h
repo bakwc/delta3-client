@@ -19,6 +19,6 @@ namespace delta3
         void protocolMessage();
 
     signals:
-        void messageReadyRead(ProtocolMode, qint16, QByteArray&);
+        void messageReadyRead(ProtocolMode, qint16, const QByteArray&);
     };
 }
