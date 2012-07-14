@@ -2,9 +2,9 @@
 
 namespace delta3
 {
-    const qint8 CSPYP1_PROTOCOL_ID = 1;
+    const qint8 CSPYP1_PROTOCOL_ID      = 1;
     const qint8 CSPYP1_PROTOCOL_VERSION = 3;
-    const qint8 CSPYP2_PROTOCOL_ID = 1;
+    const qint8 CSPYP2_PROTOCOL_ID      = 1;
     const qint8 CSPYP2_PROTOCOL_VERSION = 2;
 
     enum ProtocolMode

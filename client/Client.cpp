@@ -267,8 +267,7 @@ namespace delta3
         buf.append(mode);
         buf.append(toBytes(data.size()));
         buf.append(data);
-
-        sendData2(adminId, data);
+        sendData2(adminId, buf);
     }
 
     void Client::sendData2(qint16 adminId, const QByteArray &data)
