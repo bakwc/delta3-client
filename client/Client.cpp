@@ -48,7 +48,7 @@ namespace delta3
         hello.append(CSPYP1_PROTOCOL_VERSION);
         hello.append(CMD1_AUTH);
         hello.append(md5hash);
-        hello=hello.leftJustified( 59, 0 );
+        hello = hello.leftJustified( 59, 0 );
         qDebug() << "onConnect()" << hello.toHex();
         socket->write(hello);
     }
@@ -60,9 +60,9 @@ namespace delta3
 
     void Client::onDataReceived()
     {
-        qDebug() << "onDataReceived()";
+        qDebug() << "onDataReceived():";
         buf_ += socket->readAll();
-
+        qDebug() << buf_.toHex();
         if (buf_.size() < 3) return; // if we don't read header
 
         qDebug() << "ID:" << getProtoId(buf_);
@@ -94,6 +94,7 @@ namespace delta3
         default:
             break;
         }
+        buf_.clear();
     }
 
     void Client::parsePing()
@@ -110,9 +111,10 @@ namespace delta3
 
         qDebug() << "Ping parsed and answere!";
 
-        buf_ = buf_.right(buf_.size() - 3);
-        if (buf_.size() > 0)
-            onDataReceived();   // If something in buffer - parse again
+//        buf_ = buf_.right(buf_.size() - 3);
+//        if (buf_.size() > 0)
+//            onDataReceived();   // If something in buffer - parse again
+        buf_.clear();
     }
 
     void Client::parseResponse()
@@ -129,8 +131,6 @@ namespace delta3
         qint16 from = getClientId(buf_);
 
         QByteArray cmd = getPacketData(buf_);
-
-        qDebug() << "parseResponse():";
 
         parseProtoTwo(from, cmd);
         return;
@@ -176,6 +176,7 @@ namespace delta3
 
     void Client::parseProtocolsMessages(qint16 adminId, const QByteArray& data)
     {
+        qDebug() << data << getMode(data);
         switch(getMode(data)){
         case MOD_TELNET : test1.find(adminId).value()->
                     incomeMessage(data.mid(5, getPacketLength(data)));
@@ -208,7 +209,8 @@ namespace delta3
         qDebug() << "activateDeactivateProtocol()";
 
 
-        if (turn == CMD2_ACTIVATE){
+        if (turn == CMD2_ACTIVATE){            
+
             switch(proto){
 
             case MOD_TELNET :{
@@ -253,9 +255,12 @@ namespace delta3
             default:
                 break;
             }
-
         }
-
+//        buf_ = buf_.right(buf_.size() - 4);
+//        qDebug() << buf_.toHex();
+//        if (buf_.size() > 0)
+//            onDataReceived();   // If something in buffer - parse again
+        buf_.clear();
     }
 
     void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray &data)
@@ -279,7 +284,6 @@ namespace delta3
         dataToSend.append(toBytes(adminId));
         dataToSend.append(toBytes(data.size()));
         dataToSend.append(data);
-        qDebug() << "sendData2\n"    << dataToSend.toHex();
         socket->write(dataToSend);
     }
 }
