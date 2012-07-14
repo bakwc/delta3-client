@@ -56,7 +56,7 @@ namespace delta3
 
         QByteArray getPacketData(const QByteArray& data)
         {
-            return data.mid(5, getPacketLength(data));
+            return data.mid(9, getPacketLength(data));
         }
 
         qint32 getPacketLength(const QByteArray& data)

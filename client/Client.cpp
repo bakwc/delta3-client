@@ -65,6 +65,9 @@ namespace delta3
 
         if (buf_.size() < 3) return; // if we don't read header
 
+        qDebug() << "ID:" << getProtoId(buf_);
+        qDebug() << "Version" << getProtoVersion(buf_);
+
         if (    getProtoId(buf_)       != CSPYP1_PROTOCOL_ID ||
                 getProtoVersion(buf_) != CSPYP1_PROTOCOL_VERSION)
         {
@@ -115,6 +118,7 @@ namespace delta3
     void Client::parseResponse()
     {
         qDebug() << "parseResponse()";
+        qDebug() << buf_.toHex();
 
         if (buf_.size() < 9) // TODO: remove magic number
             return;     // not all data avaliable
@@ -134,7 +138,8 @@ namespace delta3
 
     void Client::parseProtoTwo(qint16 from, const QByteArray &data)
     {
-        qDebug() << "parseProtoTwo()";
+        qDebug() << "parseProtoTwo():" << data.size();
+        qDebug() << data.toHex();
 
         if (    getProtoId(data)      != CSPYP2_PROTOCOL_ID ||
                 getProtoVersion(data)!= CSPYP2_PROTOCOL_VERSION)
