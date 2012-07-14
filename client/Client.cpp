@@ -48,6 +48,7 @@ namespace delta3
         hello.append(CSPYP1_PROTOCOL_VERSION);
         hello.append(CMD1_AUTH);
         hello.append(md5hash);
+        hello=hello.leftJustified( 59, 0 );
         qDebug() << "onConnect()" << hello.toHex();
         socket->write(hello);
     }
@@ -156,10 +157,11 @@ namespace delta3
             parseProtocolsMessages(from, data);
             break;
         case CMD2_ACTIVATE:
-            activateDeactivateProtocol(CMD2_ACTIVATE, from, (ProtocolMode) data[5]);
+            qDebug() << "Activation";
+            activateDeactivateProtocol(CMD2_ACTIVATE, from, (ProtocolMode) data[3]);
             break;
         case CMD2_DEACTIVATE:
-            activateDeactivateProtocol(CMD2_DEACTIVATE, from,(ProtocolMode) data[5]);
+            activateDeactivateProtocol(CMD2_DEACTIVATE, from,(ProtocolMode) data[3]);
             break;
 
         default:
