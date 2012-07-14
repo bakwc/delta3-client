@@ -177,6 +177,8 @@ namespace delta3
         case MOD_GRAPH  : test2.find(adminId).value()->
                     incomeMessage(data.mid(5, getPacketLength(data)));
             break;
+        default:
+            break;
         }
     }
 
@@ -223,6 +225,8 @@ namespace delta3
                 test2.insert(adminId, newone);
                 break;
             }
+            default:
+                break;
             }
 
         }
@@ -239,8 +243,9 @@ namespace delta3
                 delete test2.find(adminId).value();
                 test2.remove(adminId);
                 break;
+            default:
+                break;
             }
-
 
         }
 
