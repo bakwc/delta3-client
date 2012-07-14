@@ -4,27 +4,30 @@
 #include <QTextCodec>
 #include "Client.h"
 
-class Application : public QCoreApplication
+namespace delta3
 {
-    Q_OBJECT
-public:
-    explicit Application( int& argc, char* argv[] );
-    ~Application();
-    bool init();
+    class Application : public QCoreApplication
+    {
+        Q_OBJECT
+    public:
+        explicit Application( int& argc, char* argv[] );
+        ~Application();
+        bool init();
 
-private:
-    void parseCmdLine();
-    bool parseOptions( const QString& arg );
-    bool parseOptionsWithParam( const QString& arg, const QString& param );
+    private:
+        void parseCmdLine();
+        bool parseOptions( const QString& arg );
+        bool parseOptionsWithParam( const QString& arg, const QString& param );
 
-    bool isOption( const QString& arg, const QString& option );
-    bool isOption(
-        const QString& arg,
-        const QString& option1,
-        const QString& option2
-    );
+        bool isOption( const QString& arg, const QString& option );
+        bool isOption(
+                const QString& arg,
+                const QString& option1,
+                const QString& option2
+                );
 
-private:
-    Client* client_;
-    bool forceQuit_;
-};
+    private:
+        Client* client_;
+        bool forceQuit_;
+    };
+}

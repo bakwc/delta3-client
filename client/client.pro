@@ -24,4 +24,5 @@ HEADERS += \
     Application.h \
     defines.h \
     mod_telnet.h \
-    mod_graph.h
+    mod_graph.h \
+    utils.h
