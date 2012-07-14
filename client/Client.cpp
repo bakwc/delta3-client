@@ -94,7 +94,6 @@ namespace delta3
         default:
             break;
         }
-        buf_.clear();
     }
 
     void Client::parsePing()
@@ -111,10 +110,9 @@ namespace delta3
 
         qDebug() << "Ping parsed and answere!";
 
-//        buf_ = buf_.right(buf_.size() - 3);
-//        if (buf_.size() > 0)
-//            onDataReceived();   // If something in buffer - parse again
-        buf_.clear();
+        buf_ = buf_.right(buf_.size() - 3);
+        if (buf_.size() > 0)
+            onDataReceived();   // If something in buffer - parse again
     }
 
     void Client::parseResponse()
@@ -133,6 +131,10 @@ namespace delta3
         QByteArray cmd = getPacketData(buf_);
 
         parseProtoTwo(from, cmd);
+        buf_ = buf_.right(buf_.size() - getPacketLength(buf_) + 9);
+        if (buf_.size() > 0)
+            onDataReceived();   // If something in buffer - parse again
+
         return;
     }
 
@@ -141,7 +143,7 @@ namespace delta3
         qDebug() << "parseProtoTwo():" << data.size();
         qDebug() << data.toHex();
 
-        if (    getProtoId(data)      != CSPYP2_PROTOCOL_ID ||
+        if (    getProtoId(data)     != CSPYP2_PROTOCOL_ID ||
                 getProtoVersion(data)!= CSPYP2_PROTOCOL_VERSION)
         {
             // wrong packet - disconnecting client
@@ -149,7 +151,6 @@ namespace delta3
             //this->disconnectFromHost();
             return;
         }
-
 
         switch (getCommand2(data))
         {
@@ -256,11 +257,6 @@ namespace delta3
                 break;
             }
         }
-//        buf_ = buf_.right(buf_.size() - 4);
-//        qDebug() << buf_.toHex();
-//        if (buf_.size() > 0)
-//            onDataReceived();   // If something in buffer - parse again
-        buf_.clear();
     }
 
     void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray &data)
