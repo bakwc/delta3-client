@@ -4,7 +4,7 @@
 #include <QBuffer>
 #include <QApplication>
 #include <QDesktopWidget>
-#include <defines.h>
+#include "defines.h"
 
 namespace delta3
 {
