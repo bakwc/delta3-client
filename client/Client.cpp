@@ -131,7 +131,7 @@ namespace delta3
         QByteArray cmd = getPacketData(buf_);
 
         parseProtoTwo(from, cmd);
-        buf_ = buf_.right(buf_.size() - getPacketLength(buf_) + 9);
+        buf_ = buf_.right(buf_.size() - (getPacketLength(buf_) + 9));
         if (buf_.size() > 0)
             onDataReceived();   // If something in buffer - parse again
 
