@@ -179,11 +179,11 @@ namespace delta3
         qDebug() << data << getMode(data);
         switch(getMode(data)){
         case MOD_TELNET : test1.find(adminId).value()->
-                    incomeMessage(data.mid(5, getPacketLength(data)));
+                    incomeMessage(data.mid(8));
             break;
 
         case MOD_GRAPH  : test2.find(adminId).value()->
-                    incomeMessage(data.mid(5, getPacketLength(data)));
+                    incomeMessage(data.mid(8));
             break;
         default:
             break;

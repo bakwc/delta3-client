@@ -28,9 +28,12 @@ namespace delta3
 
     void mod_telnet::incomeMessage(const QByteArray &data)
     {
-        qDebug() << "incomeMessage to protocol1 \n" << data;
+
+        QString cmd = QString::fromUtf8(data);
+        cmd.append('\n');
+        qDebug() << cmd ;
         if(protocol->Running)
-            protocol->write(data + '\n');
+            protocol->write(cmd.toLocal8Bit());
     }
 
     void mod_telnet::close()
@@ -42,6 +45,7 @@ namespace delta3
     void mod_telnet::protocolMessage()
     {
         QString output = QString::fromLocal8Bit(protocol->readAllStandardOutput());
+        qDebug() << output;
         emit messageReadyRead(MOD_TELNET, adminId, output.toUtf8());
     }
 }
