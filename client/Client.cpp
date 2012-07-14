@@ -259,7 +259,7 @@ namespace delta3
         }
     }
 
-    void Client::sendData3(ProtocolMode mode, qint16 adminId, const QByteArray &data)
+    void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray data)
     {
         QByteArray buf;
         buf.append(CSPYP2_PROTOCOL_ID);
