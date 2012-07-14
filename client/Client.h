@@ -21,7 +21,7 @@ namespace delta3
         void setAddress(const QString &addr);
         void setPort(quint16 port);
 
-        void sendData3(ProtocolMode mode, qint16 adminId, const QByteArray &data);
+
         void parsePing();
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
@@ -32,6 +32,9 @@ namespace delta3
         QHostAddress server;
         QMap < qint16, mod_telnet* > test1;
         QMap < qint16, mod_graph* > test2;
+
+        // Послать дату в формате согласным с протоколом
+        void sendData2(qint16 adminId, const QByteArray &data);
 
         qint8 getProtoId(const QByteArray& buffer)
         {
@@ -97,8 +100,8 @@ namespace delta3
 
     public slots:
 
-        // Послать дату в формате согласным с протоколом
-        void sendData2(qint16 adminId, const QByteArray &data);
+
+        void sendData3(ProtocolMode mode, qint16 adminId, QByteArray &data);
 
         // Запускаеться при коннекте к мастер-серверу, пока
         // генериться простой md5 (из QTime::currentTime().msec())
