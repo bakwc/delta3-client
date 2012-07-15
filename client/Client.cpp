@@ -48,8 +48,13 @@ namespace delta3
         hello.append(CSPYP1_PROTOCOL_VERSION);
         hello.append(CMD1_AUTH);
         hello.append(md5hash);
-        hello = hello.leftJustified( 59, 0 );
+
+        hello.append( toBytes("Windows", 20), 20 );
+        hello.append( toBytes("desktop", 20), 20 );
+
+        //hello = hello.leftJustified( 59, 0 );
         qDebug() << "onConnect()" << hello.toHex();
+        qDebug() << "Command size:" << hello.size();
         socket->write(hello);
     }
 

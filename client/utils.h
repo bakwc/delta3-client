@@ -21,4 +21,11 @@ namespace delta3
         const T* tmp=(reinterpret_cast<const T*>(array.data()));
         return *tmp;
     }
+
+    inline QByteArray toBytes(const QString& str, quint16 len)
+    {
+        QByteArray res=str.toLocal8Bit();
+        res.leftJustified(len, 0, true);
+        return res;
+    }
 }
