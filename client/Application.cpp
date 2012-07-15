@@ -8,10 +8,11 @@ namespace delta3
 {
     Application::Application( int& argc, char* argv[] ):
         QCoreApplication( argc, argv ),
-        client_( new Client(this) ),
+        client_( new Client() ),
         forceQuit_( false )
 
     {
+
         QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP-866"));
         QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     }
