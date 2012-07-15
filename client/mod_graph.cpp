@@ -38,6 +38,8 @@ namespace delta3
     {
         byteImage.clear();
         snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+        buffer.setBuffer(&byteImage);
+        buffer.open(QIODevice::WriteOnly);
         snapshot.save(&buffer, "JPG", quality);
         sendPix(byteImage);
     }

@@ -16,7 +16,7 @@ namespace delta3
     {
         // Добавялем первый протокол
         availableProtocols.push_back(MOD_TELNET);
-        // availableProtocols.push_back(MOD_GRAPH);
+        availableProtocols.push_back(MOD_GRAPH);
         qDebug() << server << port;
         socket = new QTcpSocket(this);
 
@@ -230,7 +230,7 @@ namespace delta3
                 connect(newone,
                         SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
                         this,
-                        SLOT(sendData3(ProtocolMode, qint16, QByteArray&))
+                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
                         );
                 test2.insert(adminId, newone);
                 break;
@@ -280,6 +280,7 @@ namespace delta3
         dataToSend.append(toBytes(adminId));
         dataToSend.append(toBytes(data.size()));
         dataToSend.append(data);
+        qDebug() << "sending :" << dataToSend.size() << "bytes";
         socket->write(dataToSend);
     }
 }

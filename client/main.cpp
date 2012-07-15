@@ -1,12 +1,10 @@
-#include "Application.h"
+#include <QtGui/QApplication>
+#include "mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    delta3::Application app( argc, argv );
-
-    if( !app.init() )
-        return 1;
-
-    return app.exec();
+    QApplication a(argc, argv);
+    delta3::MainWindow w;
+    w.show();
+    return a.exec();
 }
-

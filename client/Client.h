@@ -12,7 +12,6 @@
 #include "utils.h"
 namespace delta3
 {
-
     class Client : public QObject
     {
         Q_OBJECT
