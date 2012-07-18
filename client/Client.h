@@ -25,6 +25,7 @@ namespace delta3
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
     private:
+        QString getOS();
         QByteArray buf_;
         QTcpSocket * socket;
         quint16 port;

@@ -39,6 +39,115 @@ namespace delta3
 
     }
 
+    QString Client::getOS()
+        {
+
+            static QString osVersion;
+                if(osVersion.isEmpty())
+                {
+            #if defined(Q_OS_LINUX)
+                    utsname buf;
+                    if(uname(&buf) != -1)
+                    {
+                        osVersion.append(buf.release).append(QLatin1Char(' '));
+                        osVersion.append(buf.sysname).append(QLatin1Char(' '));
+                        osVersion.append(buf.machine).append(QLatin1Char(' '));
+                        osVersion.append(QLatin1String(" (")).append(buf.machine).append(QLatin1Char(')'));
+                    }
+                    else
+                    {
+                        osVersion = QLatin1String("Linux(unknown)");
+                    }
+            #elif defined(Q_OS_MAC)
+                    switch(QSysInfo::MacintoshVersion)
+                    {
+                        case QSysInfo::MV_LEOPARD:
+                            osVersion = QLatin1String("MacOS 10.5(Leopard)");
+                            break;
+                        case QSysInfo::MV_TIGER:
+                            osVersion = QLatin1String("MacOS 10.4(Tiger)");
+                            break;
+                        case QSysInfo::MV_PANTHER:
+                            osVersion = QLatin1String("MacOS 10.3(Panther)");
+                            break;
+                        case QSysInfo::MV_JAGUAR:
+                            osVersion = QLatin1String("MacOS 10.2(Jaguar)");
+                            break;
+                        case QSysInfo::MV_PUMA:
+                            osVersion = QLatin1String("MacOS 10.1(Puma)");
+                            break;
+                        case QSysInfo::MV_CHEETAH:
+                            osVersion = QLatin1String("MacOS 10.0(Cheetah)");
+                            break;
+                        case QSysInfo::MV_9:
+                            osVersion = QLatin1String("MacOS 9");
+                            break;
+
+                        case QSysInfo::MV_Unknown:
+                        default:
+                            osVersion = QLatin1String("MacOS(unknown)");
+                            break;
+                    }
+            #elif defined(Q_OS_WIN)
+                    switch(QSysInfo::WindowsVersion)
+                    {
+                        case QSysInfo::WV_WINDOWS7:
+                            osVersion = QLatin1String("Windows 7");
+                        break;
+                        case QSysInfo::WV_CE_6:
+                            osVersion = QLatin1String("Windows CE 6.x");
+                            break;
+                        case QSysInfo::WV_CE_5:
+                            osVersion = QLatin1String("Windows CE 5.x");
+                            break;
+                        case QSysInfo::WV_CENET:
+                            osVersion = QLatin1String("Windows CE .NET");
+                            break;
+                        case QSysInfo::WV_CE:
+                            osVersion = QLatin1String("Windows CE");
+                            break;
+
+                        case QSysInfo::WV_VISTA:
+                            osVersion = QLatin1String("Windows Vista");
+                            break;
+                        case QSysInfo::WV_2003:
+                            osVersion = QLatin1String("Windows Server 2003");
+                            break;
+                        case QSysInfo::WV_XP:
+                            osVersion = QLatin1String("Windows XP");
+                            break;
+                        case QSysInfo::WV_2000:
+                            osVersion = QLatin1String("Windows 2000");
+                            break;
+                        case QSysInfo::WV_NT:
+                            osVersion = QLatin1String("Windows NT");
+                            break;
+
+                        case QSysInfo::WV_Me:
+                            osVersion = QLatin1String("Windows Me");
+                            break;
+                        case QSysInfo::WV_98:
+                            osVersion = QLatin1String("Windows 98");
+                            break;
+                        case QSysInfo::WV_95:
+                            osVersion = QLatin1String("Windows 95");
+                            break;
+                        case QSysInfo::WV_32s:
+                            osVersion = QLatin1String("Windows 3.1");
+                            break;
+
+                        default:
+                            osVersion = QLatin1String("Windows(unknown)");
+                            break;
+                    }
+            #else
+                    return QLatin1String("Unknown");
+            #endif
+                }
+
+                return osVersion;
+        }
+
     void Client::onConnect()
     {
         QString time = QString("%1").arg( QTime::currentTime().msec() );
@@ -49,7 +158,7 @@ namespace delta3
         hello.append(CMD1_AUTH);
         hello.append(md5hash);
 
-        hello.append( toBytes("Windows", 20), 20 );
+        hello.append( toBytes(getOS(), 20), 20 );
         hello.append( toBytes("desktop", 20), 20 );
 
         //hello = hello.leftJustified( 59, 0 );
