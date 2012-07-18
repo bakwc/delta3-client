@@ -1,7 +1,7 @@
 #pragma once
 #include "Client.h"
 #include <QMainWindow>
-
+#include <QSystemTrayIcon>
 namespace Ui {
 class MainWindow;
 }
@@ -17,7 +17,10 @@ public:
     ~MainWindow();
     
 private:
+    QSystemTrayIcon *myIco;
     Ui::MainWindow *ui;
+private slots:
+     void showHide(QSystemTrayIcon::ActivationReason);
 };
 
 }
