@@ -6,6 +6,7 @@ namespace delta3
     const qint8 CSPYP1_PROTOCOL_VERSION = 3;
     const qint8 CSPYP2_PROTOCOL_ID      = 1;
     const qint8 CSPYP2_PROTOCOL_VERSION = 2;
+    const qint8 GRAPH_PROTOCOL_VERSION  = 2;
 
     enum ProtocolMode
     {
@@ -35,5 +36,20 @@ namespace delta3
         CMD2_ACTIVATE   = 3,
         CMD2_DEACTIVATE = 4,
         CMD2_TRANSMIT   = 5
+    };
+
+    enum GraphMode
+    {
+        GMOD_INFO       =  1, // Команда передачи информации о клиенте
+        GMOD_IMGFULL    =  2, // Команда запроса полного изображения
+        GMOD_IMGHALF    =  3, // Команда запроса изменения изображения
+        GMOD_IMGSTART   =  4, // Команда передачи начала изображения
+        GMOD_IMGMID     =  5, // Команда передачи середины изображения
+        GMOD_IMGEND     =  6, // Команда передачи конца изображения
+        GMOD_KEYPRESSED =  7, // Команда нажатия клавиши на клавиатуре
+        GMOD_MMOVE      =  8, // Команда перемещения мышки
+        GMOD_MLEFT      =  9, // Команда нажатия левой кнопки мышки
+        GMOD_MRIGHT     = 10, // Команда нажатия правой кнопки мышки
+        GMOD_MMID       = 11  // Команда нажатия средней кнопки мышки
     };
 }
