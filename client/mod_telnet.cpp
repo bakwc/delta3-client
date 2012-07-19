@@ -9,19 +9,18 @@ namespace delta3
     {
         protocol = new QProcess(this);
     #ifdef Q_WS_X11
+        // linux desktop
         protocol->start("bash");
-    #endif
-
-    #ifdef Q_WS_MAC
-        protocol->start("bin/bash");
-    #endif
-
-    #ifdef Q_WS_QWS
+    #elif Q_WS_MAC
+        // darwin
+        protocol->start("/bin/bash");
+    #elif Q_WS_QWS
+        // embedded linux
         protocol->start("bash");
-    #endif
-
-    #ifdef Q_WS_WIN
+    #elif Q_WS_WIN
         protocol->start("cmd");
+    #else
+        "This OS is not supported"
     #endif
         connect(protocol, SIGNAL(readyReadStandardOutput()), this, SLOT(protocolMessage()));
     }
