@@ -3,13 +3,15 @@
 client-*/
 client/debug*/
 client/release*/
+client/moc*.cpp
+client/client
 
 ui_*.h
 *.qm
 
 Makefile*
 *.user*
-
+*.o
 *.bak
 *.tmp
 *~

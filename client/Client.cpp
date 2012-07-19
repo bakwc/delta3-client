@@ -46,18 +46,11 @@ namespace delta3
                 if(osVersion.isEmpty())
                 {
             #if defined(Q_OS_LINUX)
-                    utsname buf;
-                    if(uname(&buf) != -1)
-                    {
-                        osVersion.append(buf.release).append(QLatin1Char(' '));
-                        osVersion.append(buf.sysname).append(QLatin1Char(' '));
-                        osVersion.append(buf.machine).append(QLatin1Char(' '));
-                        osVersion.append(QLatin1String(" (")).append(buf.machine).append(QLatin1Char(')'));
-                    }
-                    else
-                    {
-                        osVersion = QLatin1String("Linux(unknown)");
-                    }
+                #if defined(Q_WS_X11)
+                    osVersion = QLatin1String("Linux(X11)");
+                #else
+                    osVersion = QLatin1String("Linux(unknown)");
+                #endif
             #elif defined(Q_OS_MAC)
                     switch(QSysInfo::MacintoshVersion)
                     {
@@ -324,7 +317,7 @@ namespace delta3
         qDebug() << "activateDeactivateProtocol()";
 
 
-        if (turn == CMD2_ACTIVATE){            
+        if (turn == CMD2_ACTIVATE){
 
             switch(proto){
 
