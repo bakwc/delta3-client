@@ -27,6 +27,3 @@ HEADERS += \
 
 
 FORMS    += mainwindow.ui
-
-OTHER_FILES += \
-    delta3.png
