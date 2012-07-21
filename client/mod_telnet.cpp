@@ -17,12 +17,12 @@ namespace delta3
     #elif Q_WS_QWS
         // embedded linux
         protocol->start("bash");
-    #elif Q_WS_WIN
+    #elif Q_OS_MSDOS
         protocol->start("cmd");
     #else
-        "This OS is not supported"
+        qDebug() << "This OS is not supported";
     #endif
-        connect(protocol, SIGNAL(readyReadStandardOutput()), this, SLOT(protocolMessage()));
+           connect(protocol, SIGNAL(readyReadStandardOutput()), this, SLOT(protocolMessage()));
     }
 
     void mod_telnet::incomeMessage(const QByteArray &data)
