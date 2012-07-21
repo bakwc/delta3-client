@@ -16,6 +16,8 @@ namespace delta3
     {
         // Добавялем первый протокол
         availableProtocols.push_back(MOD_TELNET);
+
+        // Добавляем второй протокол
         availableProtocols.push_back(MOD_GRAPH);
         qDebug() << server << port;
         socket = new QTcpSocket(this);

@@ -30,6 +30,10 @@ namespace delta3
         QTcpSocket * socket;
         quint16 port;
         QHostAddress server;
+
+        // В эти мапы добавляются протоколы
+        // при активации их любым их админов
+        // Для быстрого доступа по айди.
         QMap < qint16, mod_telnet* > test1;
         QMap < qint16, mod_graph* > test2;
 
@@ -79,17 +83,15 @@ namespace delta3
         }
 
 
-        // Обработка 1: сообщений.
-        // Сделал только консоль cmd
+        // Обработка сообщений на протоколы 3 уровня
         void parseProtocolsMessages(qint16 adminId, const QByteArray &data);
 
-        // Обработка l: сообшений.
+        // Обработка запросов листа.
         // Шлет на сервер доступные протоколы
         void sendAvailableProtocols(qint16 adminId);
 
-        // Обработка a: и d: сообщений.
-        // a:1: и d:1: работают,
-        // но очень слабая реализация
+        // Обработка сообщений активации
+        // и деактивации протоколов 3 уровня
         void activateDeactivateProtocol(Cspyp2Command turn, qint16 adminId, ProtocolMode proto);
 
         // Список доступных протоколов
