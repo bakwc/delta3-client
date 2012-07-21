@@ -274,6 +274,7 @@ namespace delta3
             activateDeactivateProtocol(CMD2_ACTIVATE, from, (ProtocolMode) data[3]);
             break;
         case CMD2_DEACTIVATE:
+            qDebug() << "Deactivation";
             activateDeactivateProtocol(CMD2_DEACTIVATE, from,(ProtocolMode) data[3]);
             break;
 
@@ -313,10 +314,6 @@ namespace delta3
 
     void Client::activateDeactivateProtocol(Cspyp2Command turn, qint16 adminId, ProtocolMode proto)
     {
-
-        qDebug() << "activateDeactivateProtocol()";
-
-
         if (turn == CMD2_ACTIVATE){
 
             switch(proto){
@@ -387,7 +384,6 @@ namespace delta3
         dataToSend.append(toBytes(adminId));
         dataToSend.append(toBytes(data.size()));
         dataToSend.append(data);
-        qDebug() << "sending :" << dataToSend.size() << "bytes";
         socket->write(dataToSend);
     }
 }

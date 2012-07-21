@@ -11,13 +11,15 @@ namespace delta3
     #ifdef Q_WS_X11
         // linux desktop
         protocol->start("bash");
-    #elif Q_WS_MAC
+    #elif defined(Q_WS_MAC)
         // darwin
         protocol->start("/bin/bash");
-    #elif Q_WS_QWS
+    #elif defined(Q_WS_QWS)
         // embedded linux
         protocol->start("bash");
-    #elif Q_OS_MSDOS
+    #elif defined(Q_OS_MSDOS)
+        protocol->start("cmd");
+    #elif defined(Q_WS_WIN)
         protocol->start("cmd");
     #else
         qDebug() << "This OS is not supported";
@@ -44,7 +46,7 @@ namespace delta3
     void mod_telnet::protocolMessage()
     {
         QString output = QString::fromLocal8Bit(protocol->readAllStandardOutput());
-        qDebug() << output;
+        qDebug() << "proto3 output:\n" << output.toUtf8();
         emit messageReadyRead(MOD_TELNET, adminId, output.toUtf8());
     }
 }
