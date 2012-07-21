@@ -54,6 +54,8 @@ namespace delta3
             #elif defined(Q_OS_MAC)
                     switch(QSysInfo::MacintoshVersion)
                     {
+                        case QSysInfo::MV_SNOWLEOPARD:
+                            osVersion = QLatin1String("MacOS 10.6(SnowLeopard");
                         case QSysInfo::MV_LEOPARD:
                             osVersion = QLatin1String("MacOS 10.5(Leopard)");
                             break;
