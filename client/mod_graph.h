@@ -5,6 +5,9 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include "defines.h"
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 namespace delta3
 {
@@ -22,6 +25,7 @@ namespace delta3
         quint8 quality;
         void sendPix(QByteArray &byteImg);
         void close();
+        void mouseClick(GraphMode key, quint16 x, quint16 y);
     public slots:
         void screentick();
 

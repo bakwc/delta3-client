@@ -8,6 +8,7 @@ QT       += core network gui
 
 TARGET = client
 TEMPLATE = app
+win32:DEFINES += "WINVER=0x0500"
 
 QMAKE_CXXFLAGS += -std=c++0x
 

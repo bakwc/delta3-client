@@ -1,12 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 namespace delta3{
     MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow)
-    {       
+    {
         ui->setupUi(this);
         QPixmap oPixmap(16,16);
         oPixmap.fill(qRgb( 255, 0, 255 ));
