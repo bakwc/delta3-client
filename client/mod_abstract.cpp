@@ -7,3 +7,10 @@ delta3::mod_abstract::mod_abstract(QObject *parent = 0, quint16 adminId = 0)
 
 }
 //------------------------------------------------------------------------------
+/*
+delta3::mod_abstract::getAdminId()                          const
+{
+    return _adminId;
+}
+*/
+//------------------------------------------------------------------------------
