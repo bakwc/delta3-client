@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Client.h"
 #include <QMainWindow>
 #include <QSystemTrayIcon>

@@ -1,5 +1,6 @@
 #pragma once
-
+#include <QByteArray>
+#include <QDebug>
 namespace delta3
 {
     template <typename T>

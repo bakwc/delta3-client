@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     Client.cpp \
     mod_telnet.cpp \
-    mod_graph.cpp
+    mod_graph.cpp \
+    mod_abstract.cpp
 
 HEADERS += \
     Client.h \
@@ -24,7 +25,8 @@ HEADERS += \
     defines.h \
     mod_telnet.h \
     mod_graph.h \
-    utils.h
+    utils.h \
+    mod_abstract.h
 
 
 FORMS    += mainwindow.ui

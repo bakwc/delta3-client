@@ -1,21 +1,23 @@
 #include "mod_graph.h"
 #include <QDebug>
 #include <QTimer>
-#include "utils.h"
 namespace delta3
 {
-    mod_graph::mod_graph(QObject *parent, quint16 adminId_):
-        QObject(parent),
-        adminId(adminId_)
+    mod_graph::mod_graph(QObject *parent, quint16 adminId)
+        : mod_abstract(parent, adminId)
     {
-        snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
-        buffer.setBuffer(&byteImage);
-        buffer.open(QIODevice::WriteOnly);
-        quality = 30;
-        format = "PNG";
-        snapshot.save(&buffer, format.toLocal8Bit(), quality);
-        qDebug() << byteImage.size();
-        sendPix(byteImage);
+        const quint16 QUALITY = 20;
+
+        _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+        _buffer.setBuffer(&_byteImage);
+        _buffer.open(QIODevice::WriteOnly);
+        _quality = QUALITY;
+        _format = "PNG";
+        qDebug() << _byteImage.size();
+        QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
+        _snapshot.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
+        _snapshot.save(&_buffer, _format.toLocal8Bit(), _quality);
+        sendPix(_byteImage);
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(screentick()));
         timer->start(1000);
@@ -29,7 +31,7 @@ namespace delta3
         case GMOD_IMGFULL : qDebug() << "GMOD_IMGFULL"; break;
         case GMOD_IMGDIFF : qDebug() << "GMOD_IMGDIFF"; break;
         case GMOD_KEYEV   : qDebug() << "GMOD_KEYEV"; break;
-        case GMOD_MMOV    : qDebug() << "GMOD_MMOV"; break;
+        case GMOD_MMOV    : qDebug() << "GMOD_MMOV"; mouseMove(data); break;
         case GMOD_MCLICK  : qDebug() << "MCLICK"; mouseClick(data); break;
         default : break;
         }
@@ -37,7 +39,7 @@ namespace delta3
 
     void mod_graph::sendPix(QByteArray &byteImg)
     {
-        emit messageReadyRead(MOD_GRAPH, adminId, byteImg);
+        emit messageReadyRead(MOD_GRAPH, _adminId, byteImg);
     }
 
     void mod_graph::close()
@@ -45,42 +47,51 @@ namespace delta3
         this->disconnect();
     }
 
+    void mod_graph::mouseMove(const QByteArray& data){
+        quint16 x = fromBytes<quint16>(data.mid(1,2));
+        quint16 y = fromBytes<quint16>(data.mid(3,2));
+        QCursor::setPos(x*2, y*2);
+    }
+
     void mod_graph::mouseClick(const QByteArray& data)
     {
-        quint16 x = fromBytes<quint16>(data.mid(2,2));
-        quint16 y = fromBytes<quint16>(data.mid(4,2));
-        QCursor::setPos(x*2, y*2);
-//        if(x > 10 && y > 10){
-//            x-=10;
-//            y-=10;
-//        }
-    #ifdef Q_OS_WIN
-        INPUT    Input={0};
-        if(data[1] == Qt::LeftButton){
 
-        // +mouse1
+        quint16 x = fromBytes<quint16>(data.mid(1,2));
+        quint16 y = fromBytes<quint16>(data.mid(3,2));
+        QCursor::setPos(x*2, y*2);
+
+    #ifdef Q_OS_WIN
+
+        quint8 mCode;
+        switch(data[5]){
+        case Qt::LeftButton        : mCode = MOUSEEVENTF_LEFTDOWN; break;
+        case Qt::RightButton       : mCode = MOUSEEVENTF_RIGHTDOWN; break;
+        case Qt::MidButton         : mCode = MOUSEEVENTF_MIDDLEDOWN;break;
+        case Qt::LeftButton  + 20  : mCode = MOUSEEVENTF_LEFTUP; break;
+        case Qt::RightButton + 20  : mCode = MOUSEEVENTF_RIGHTUP; break;
+        case Qt::MidButton   + 20  : mCode = MOUSEEVENTF_MIDDLEUP; break;
+        default                    : mCode = 0xFF;
+        }
+
+        if(mCode != 0xFF){
+            INPUT    Input={0};
             Input.type        = INPUT_MOUSE;
-            Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;
+            Input.mi.dwFlags  = mCode;
             ::SendInput(1, &Input, sizeof(INPUT));
         }
 
-        // -mouse1
-     //   ::ZeroMemory(&Input, sizeof(INPUT));
-        if(data[1] == Qt::LeftButton + 20){
-            Input.type        = INPUT_MOUSE;
-            Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
-            ::SendInput(1, &Input,sizeof(INPUT));
-        }
+
     #endif
     }
 
     void mod_graph::screentick()
     {
-        byteImage.clear();
-        snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
-        buffer.open(QIODevice::WriteOnly);
-        snapshot.save(&buffer, format.toLocal8Bit(), quality);
-        sendPix(byteImage);
+        _byteImage.clear();
+        _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+        _buffer.open(QIODevice::WriteOnly);
+        QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
+        _snapshot.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
+        sendPix(_byteImage);
     }
 }
 

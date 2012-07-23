@@ -47,5 +47,4 @@ namespace delta3
         GMOD_MMOV    = 5,
         GMOD_MCLICK	 = 6
     };
-
 }
