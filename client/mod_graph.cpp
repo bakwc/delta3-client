@@ -3,17 +3,18 @@
 #include <QTimer>
 namespace delta3
 {
-    mod_graph::mod_graph(QObject *parent, quint16 adminId_):
-        QObject(parent),
-        adminId(adminId_)
+    mod_graph::mod_graph(QObject *parent, quint16 adminId)
+        : mod_abstract(parent, adminId)
     {
-        snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
-        buffer.setBuffer(&byteImage);
-        buffer.open(QIODevice::WriteOnly);
-        quality = 20;
-        snapshot.save(&buffer, "JPG", quality);
-        qDebug() << byteImage.size();
-        sendPix(byteImage);
+        const quint16 QUALITY = 20;
+
+        _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+        _buffer.setBuffer(&_byteImage);
+        _buffer.open(QIODevice::WriteOnly);
+        _quality = QUALITY;
+        _snapshot.save(&_buffer, "JPG", _quality);
+        qDebug() << _byteImage.size();
+        sendPix(_byteImage);
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(screentick()));
         timer->start(1000);
@@ -39,7 +40,7 @@ namespace delta3
 
     void mod_graph::sendPix(QByteArray &byteImg)
     {
-        emit messageReadyRead(MOD_GRAPH, adminId, byteImg);
+        emit messageReadyRead(MOD_GRAPH, _adminId, byteImg);
     }
 
     void mod_graph::close()
@@ -62,16 +63,18 @@ namespace delta3
         Input.type        = INPUT_MOUSE;
         Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
         ::SendInput(1, &Input,sizeof(INPUT));
+    #else
+        qDebug() << "mod_graph::mouseClick - OS is not supported";
     #endif
     }
 
     void mod_graph::screentick()
     {
-        byteImage.clear();
-        snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
-        buffer.open(QIODevice::WriteOnly);
-        snapshot.save(&buffer, "JPG", quality);
-        sendPix(byteImage);
+        _byteImage.clear();
+        _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+        _buffer.open(QIODevice::WriteOnly);
+        _snapshot.save(&_buffer, "JPG", _quality);
+        sendPix(_byteImage);
     }
 }
 
