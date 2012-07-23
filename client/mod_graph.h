@@ -17,15 +17,19 @@ namespace delta3
 
     public:
         explicit mod_graph(QObject *parent = 0, quint16 adminId = 0);
+
+        void close();
+        void incomeMessage(const QByteArray &data);
+    private:
+        QString format;
         QPixmap snapshot;
         QBuffer buffer;
         QByteArray byteImage;
-        void incomeMessage(const QByteArray &data);
+
         quint16 adminId;
         quint8 quality;
         void sendPix(QByteArray &byteImg);
-        void close();
-        void mouseClick(GraphMode key, quint16 x, quint16 y);
+        void mouseClick(const QByteArray & data);
     public slots:
         void screentick();
 
