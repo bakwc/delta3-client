@@ -12,8 +12,11 @@ namespace delta3
         _buffer.setBuffer(&_byteImage);
         _buffer.open(QIODevice::WriteOnly);
         _quality = QUALITY;
-        _snapshot.save(&_buffer, "JPG", _quality);
+        _format = "PNG";
         qDebug() << _byteImage.size();
+        QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
+        _snapshot.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
+        _snapshot.save(&_buffer, _format.toLocal8Bit(), _quality);
         sendPix(_byteImage);
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(screentick()));
@@ -24,16 +27,12 @@ namespace delta3
     {
         qDebug() << "IncomeMessage()" << data.toHex();
         switch(data[0]){
-        case GMOD_IMGFULL    : qDebug() << "GMOD_IMGFULL"; break;
-        case GMOD_IMGHALF    : qDebug() << "GMOD_IMGHALF"; break;
-        case GMOD_IMGSTART   : qDebug() << "GMOD_IMGSTART"; break;
-        case GMOD_IMGMID     : qDebug() << "GMOD_IMGMID"; break;
-        case GMOD_IMGEND     : qDebug() << "GMOD_IMGEND"; break;
-        case GMOD_KEYPRESSED : qDebug() << "GMOD_KEYPRESSED"; break;
-        case GMOD_MMOVE      : qDebug() << "GMOD_MMOVE"; break;
-        case GMOD_MLEFT      : qDebug() << "GMOD_MLEFT"; break;
-        case GMOD_MRIGHT     : qDebug() << "GMOD_MRIGHT"; break;
-        case GMOD_MMID       : qDebug() << "GMOD_MMID"; break;
+        case GMOD_INFO    : qDebug() << "GMOD_INFO"; break;
+        case GMOD_IMGFULL : qDebug() << "GMOD_IMGFULL"; break;
+        case GMOD_IMGDIFF : qDebug() << "GMOD_IMGDIFF"; break;
+        case GMOD_KEYEV   : qDebug() << "GMOD_KEYEV"; break;
+        case GMOD_MMOV    : qDebug() << "GMOD_MMOV"; mouseMove(data); break;
+        case GMOD_MCLICK  : qDebug() << "MCLICK"; mouseClick(data); break;
         default : break;
         }
     }
@@ -48,23 +47,40 @@ namespace delta3
         this->disconnect();
     }
 
-    void mod_graph::mouseClick(GraphMode key, quint16 x, quint16 y)
+    void mod_graph::mouseMove(const QByteArray& data){
+        quint16 x = fromBytes<quint16>(data.mid(1,2));
+        quint16 y = fromBytes<quint16>(data.mid(3,2));
+        QCursor::setPos(x*2, y*2);
+    }
+
+    void mod_graph::mouseClick(const QByteArray& data)
     {
+
+        quint16 x = fromBytes<quint16>(data.mid(1,2));
+        quint16 y = fromBytes<quint16>(data.mid(3,2));
+        QCursor::setPos(x*2, y*2);
+
     #ifdef Q_OS_WIN
-        INPUT    Input={0};
 
-        // +mouse1
-        Input.type        = INPUT_MOUSE;
-        Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;
-        ::SendInput(1, &Input, sizeof(INPUT));
+        quint8 mCode;
+        switch(data[5]){
+        case Qt::LeftButton        : mCode = MOUSEEVENTF_LEFTDOWN; break;
+        case Qt::RightButton       : mCode = MOUSEEVENTF_RIGHTDOWN; break;
+        case Qt::MidButton         : mCode = MOUSEEVENTF_MIDDLEDOWN;break;
+        case Qt::LeftButton  + 20  : mCode = MOUSEEVENTF_LEFTUP; break;
+        case Qt::RightButton + 20  : mCode = MOUSEEVENTF_RIGHTUP; break;
+        case Qt::MidButton   + 20  : mCode = MOUSEEVENTF_MIDDLEUP; break;
+        default                    : mCode = 0xFF;
+        }
 
-        // -mouse1
-        ::ZeroMemory(&Input, sizeof(INPUT));
-        Input.type        = INPUT_MOUSE;
-        Input.mi.dwFlags  = MOUSEEVENTF_LEFTUP;
-        ::SendInput(1, &Input,sizeof(INPUT));
-    #else
-        qDebug() << "mod_graph::mouseClick - OS is not supported";
+        if(mCode != 0xFF){
+            INPUT    Input={0};
+            Input.type        = INPUT_MOUSE;
+            Input.mi.dwFlags  = mCode;
+            ::SendInput(1, &Input, sizeof(INPUT));
+        }
+
+
     #endif
     }
 
@@ -73,7 +89,8 @@ namespace delta3
         _byteImage.clear();
         _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
         _buffer.open(QIODevice::WriteOnly);
-        _snapshot.save(&_buffer, "JPG", _quality);
+        QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
+        _snapshot.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
         sendPix(_byteImage);
     }
 }
