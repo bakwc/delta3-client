@@ -17,3 +17,9 @@ Makefile*
 *~
 
 *.autosave
+
+#doxygen
+latex
+html
+
+
