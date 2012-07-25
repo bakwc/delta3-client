@@ -1,5 +1,5 @@
 #include <QtGui/QApplication>
-#include "mainwindow.h"
+#include "UI/mainwindow.h"
 #include "Client.h"
 #include <QTextCodec>
 int main(int argc, char *argv[])

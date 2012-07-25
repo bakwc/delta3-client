@@ -72,9 +72,14 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
             Input.mi.dwFlags  = mCode;
             ::SendInput(1, &Input, sizeof(INPUT));
         }
+	#endif
 
+#ifdef Q_WS_X11
+		qDebug("click");
 
-    #endif
+#endif
+		qDebug("clickq");
+
     }
 
 	void ModGraphics::screentick()

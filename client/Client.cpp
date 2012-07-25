@@ -159,8 +159,8 @@ namespace delta3
         hello.append( toBytes("desktop", 20), 20 );
 
         //hello = hello.leftJustified( 59, 0 );
-        qDebug() << "onConnect()" << hello.toHex();
-        qDebug() << "Command size:" << hello.size();
+		qDebug() << "onConnect()" << hello.toHex() << "Command size:" << hello.size();
+
         socket->write(hello);
     }
 
@@ -176,8 +176,7 @@ namespace delta3
         qDebug() << buf_.toHex();
         if (buf_.size() < 3) return; // if we don't read header
 
-        qDebug() << "ID:" << getProtoId(buf_);
-        qDebug() << "Version" << getProtoVersion(buf_);
+		qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
 
         if (    getProtoId(buf_)       != CSPYP1_PROTOCOL_ID ||
                 getProtoVersion(buf_) != CSPYP1_PROTOCOL_VERSION)
@@ -188,8 +187,7 @@ namespace delta3
             return;
         }
 
-        qDebug() << "buf size" << buf_.size();
-        qDebug() << "cmd:" << getCommand(buf_);
+		qDebug() << "    buf size" << buf_.size() << " cmd:" << getCommand(buf_);
 
         switch (getCommand(buf_))
         {
@@ -209,7 +207,7 @@ namespace delta3
 
     void Client::parsePing()
     {
-        qDebug() << "Ping received!";
+		//qDebug() << "Ping received!";
         if (buf_.size() < 3) // TODO: remove magic number
             return;     // not all data avaliable
 
@@ -219,7 +217,7 @@ namespace delta3
         cmd.append(CMD1_PING);
         socket->write(cmd);
 
-        qDebug() << "Ping parsed and answere!";
+		//qDebug() << "Ping parsed and answere!";
 
         buf_ = buf_.right(buf_.size() - 3);
         if (buf_.size() > 0)
@@ -266,19 +264,19 @@ namespace delta3
         switch (getCommand2(data))
         {
         case CMD2_LIST:
-            qDebug() << "list";
+			qDebug() << "list";
             sendAvailableProtocols(from);
             break;
         case CMD2_TRANSMIT:
-            qDebug() << "CMD2_TRANSMIT";
+			qDebug() << "CMD2_TRANSMIT";
             parseProtocolsMessages(from, data);
             break;
         case CMD2_ACTIVATE:
-            qDebug() << "Activation";
+			//qDebug() << "Activation";
             activateDeactivateProtocol(CMD2_ACTIVATE, from, (ProtocolMode) data[3]);
             break;
         case CMD2_DEACTIVATE:
-            qDebug() << "Deactivation";
+			//qDebug() << "Deactivation";
             activateDeactivateProtocol(CMD2_DEACTIVATE, from,(ProtocolMode) data[3]);
             break;
 
