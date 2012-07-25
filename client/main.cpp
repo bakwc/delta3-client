@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP-866"));
+    //QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     delta3::MainWindow w;
     return a.exec();
