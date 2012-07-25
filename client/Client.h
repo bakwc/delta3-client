@@ -120,6 +120,6 @@ private:
 		quint16 port;
 		QHostAddress server;
 
-		QMap<qint16, ModAbstract*> mods_;
+		QMap<ProtocolMode, QMap<qint16, ModAbstract*> > mods_;
     };
 }

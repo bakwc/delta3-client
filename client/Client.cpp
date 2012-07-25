@@ -288,23 +288,8 @@ namespace delta3
     void Client::parseProtocolsMessages(qint16 adminId, const QByteArray& data)
     {
         qDebug() << data << getMode(data);
-        switch(getMode(data)){
-		case MOD_TELNET :/* test1.find(adminId).value()->
-					incomeMessage(data.mid(8));*/
 
-			mods_.value(adminId)->incomeMessage(data.mid(8));
-
-            break;
-
-		case MOD_GRAPHICS  :/* test2.find(adminId).value()->
-					incomeMessage(data.mid(8));*/
-
-			mods_.value(adminId)->incomeMessage(data.mid(8));
-
-            break;
-        default:
-            break;
-        }
+        mods_[getMode(data)][adminId]->incomeMessage(data.mid(8));
     }
 
     void Client::sendAvailableProtocols(qint16 adminId)
@@ -326,62 +311,21 @@ namespace delta3
 
             switch(proto){
 
-            case MOD_TELNET :{
-//				ModTelnet * newone = new ModTelnet(adminId, this);
-//                connect(newone,
-//                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
-//                        this,
-//                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
-//                        );
-//                test1.insert(adminId, newone);
-
-				mods_.insert(adminId, new ModTelnet(adminId, this));
-
-                break;
-            }
-
-			case MOD_GRAPHICS :{
-//				ModGraphics * newone = new ModGraphics(adminId, this);
-//                connect(newone,
-//                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
-//                        this,
-//                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
-//                        );
- //               test2.insert(adminId, newone);
-
-				mods_.insert(adminId, new ModGraphics(adminId, this));
-
-                break;
-            }
-            default:
-                break;
-            }
-
-        }
-        else if (turn == CMD2_DEACTIVATE) {
-            switch(proto){
             case MOD_TELNET :
-				//test1.find(adminId).value()->close();
-//                delete test1.find(adminId).value();
-//                test1.remove(adminId);
-
-				delete mods_.value(adminId);
-				mods_.remove(adminId);
-
+                mods_[proto].insert(adminId, new ModTelnet(adminId, this));
                 break;
 
-			case MOD_GRAPHICS :
-				//test2.find(adminId).value()->close();
-//                delete test2.find(adminId).value();
-//                test2.remove(adminId);
-
-				delete mods_.value(adminId);
-				mods_.remove(adminId);
-
+            case MOD_GRAPHICS :
+                mods_[proto].insert(adminId, new ModGraphics(adminId, this));
                 break;
+
             default:
                 break;
             }
+
+        } else if (turn == CMD2_DEACTIVATE) {
+                delete mods_[proto][adminId];
+                mods_[proto].remove(adminId);
         }
     }
 
