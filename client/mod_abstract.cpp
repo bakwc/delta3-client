@@ -1,5 +1,5 @@
 #include "mod_abstract.h"
-#include "Client.h"
+#include "client.h"
 
 delta3::ModAbstract::ModAbstract(ProtocolMode mode, qint16 adminId, Client *client)
 	: QObject(client), _adminId(adminId), mode_(mode)

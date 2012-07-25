@@ -14,13 +14,13 @@ QMAKE_CXXFLAGS += -std=c++0x
 
 SOURCES += main.cpp \
     UI/mainwindow.cpp \
-    Client.cpp \
+    client.cpp \
     mod_telnet.cpp \
     mod_graph.cpp \
     mod_abstract.cpp
 
 HEADERS += \
-    Client.h \
+    client.h \
     UI/mainwindow.h \
     defines.h \
     mod_telnet.h \
