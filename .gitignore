@@ -18,6 +18,9 @@ Makefile*
 
 *.autosave
 
+*.Debug
+*.Release
+
 #doxygen
 latex
 html
