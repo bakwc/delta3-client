@@ -18,7 +18,7 @@ namespace delta3
         availableProtocols.push_back(MOD_TELNET);
 
         // Добавляем второй протокол
-        availableProtocols.push_back(MOD_GRAPH);
+		availableProtocols.push_back(MOD_GRAPHICS);
         qDebug() << server << port;
         socket = new QTcpSocket(this);
 
@@ -291,12 +291,18 @@ namespace delta3
     {
         qDebug() << data << getMode(data);
         switch(getMode(data)){
-        case MOD_TELNET : test1.find(adminId).value()->
-                    incomeMessage(data.mid(8));
+		case MOD_TELNET :/* test1.find(adminId).value()->
+					incomeMessage(data.mid(8));*/
+
+			mods_.value(adminId)->incomeMessage(data.mid(8));
+
             break;
 
-        case MOD_GRAPH  : test2.find(adminId).value()->
-                    incomeMessage(data.mid(8));
+		case MOD_GRAPHICS  :/* test2.find(adminId).value()->
+					incomeMessage(data.mid(8));*/
+
+			mods_.value(adminId)->incomeMessage(data.mid(8));
+
             break;
         default:
             break;
@@ -323,24 +329,30 @@ namespace delta3
             switch(proto){
 
             case MOD_TELNET :{
-                mod_telnet * newone = new mod_telnet(this, adminId);
-                connect(newone,
-                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
-                        this,
-                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
-                        );
-                test1.insert(adminId, newone);
+//				ModTelnet * newone = new ModTelnet(adminId, this);
+//                connect(newone,
+//                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
+//                        this,
+//                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
+//                        );
+//                test1.insert(adminId, newone);
+
+				mods_.insert(adminId, new ModTelnet(adminId, this));
+
                 break;
             }
 
-            case MOD_GRAPH :{
-                mod_graph * newone = new mod_graph(this, adminId);
-                connect(newone,
-                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
-                        this,
-                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
-                        );
-                test2.insert(adminId, newone);
+			case MOD_GRAPHICS :{
+//				ModGraphics * newone = new ModGraphics(adminId, this);
+//                connect(newone,
+//                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
+//                        this,
+//                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
+//                        );
+ //               test2.insert(adminId, newone);
+
+				mods_.insert(adminId, new ModGraphics(adminId, this));
+
                 break;
             }
             default:
@@ -351,15 +363,23 @@ namespace delta3
         else if (turn == CMD2_DEACTIVATE) {
             switch(proto){
             case MOD_TELNET :
-                test1.find(adminId).value()->close();
-                delete test1.find(adminId).value();
-                test1.remove(adminId);
+				//test1.find(adminId).value()->close();
+//                delete test1.find(adminId).value();
+//                test1.remove(adminId);
+
+				delete mods_.value(adminId);
+				mods_.remove(adminId);
+
                 break;
 
-            case MOD_GRAPH :
-                test2.find(adminId).value()->close();
-                delete test2.find(adminId).value();
-                test2.remove(adminId);
+			case MOD_GRAPHICS :
+				//test2.find(adminId).value()->close();
+//                delete test2.find(adminId).value();
+//                test2.remove(adminId);
+
+				delete mods_.value(adminId);
+				mods_.remove(adminId);
+
                 break;
             default:
                 break;

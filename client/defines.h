@@ -11,7 +11,7 @@ namespace delta3
     enum ProtocolMode
     {
         MOD_TELNET   = 1,
-        MOD_GRAPH    = 2,
+		MOD_GRAPHICS = 2,
         MOD_FILE     = 3,
         MOD_MEDIA    = 4,
         MOD_PROXY    = 5,
