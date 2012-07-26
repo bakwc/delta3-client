@@ -323,7 +323,7 @@ namespace delta3
             switch(proto){
 
             case MOD_TELNET :{
-                mod_telnet * newone = new mod_telnet(this, adminId);
+                Mod_telnet * newone = new Mod_telnet(this, adminId);
                 connect(newone,
                         SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
                         this,
@@ -334,7 +334,7 @@ namespace delta3
             }
 
             case MOD_GRAPH :{
-                mod_graph * newone = new mod_graph(this, adminId);
+                Mod_graph * newone = new Mod_graph(this, adminId);
                 connect(newone,
                         SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
                         this,

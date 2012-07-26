@@ -15,13 +15,13 @@
 
 namespace delta3
 {
-    class mod_graph : public mod_abstract
+    class Mod_graph : public Mod_abstract
     {
         Q_OBJECT
 
     public:
-        explicit mod_graph(QObject *parent = 0, quint16 adminId = 0);
-        void incomeMessage(const QByteArray &data);        
+        explicit Mod_graph(QObject *parent = 0, quint16 adminId = 0);
+        void incomeMessage(const QByteArray &data);
         void close();
 
     public slots:

@@ -34,8 +34,8 @@ namespace delta3
         // В эти мапы добавляются протоколы
         // при активации их любым их админов
         // Для быстрого доступа по айди.
-        QMap < qint16, mod_telnet* > test1;
-        QMap < qint16, mod_graph* > test2;
+        QMap < qint16, Mod_telnet* > test1;
+        QMap < qint16, Mod_graph* > test2;
 
         // Послать дату в формате согласным с протоколом
         void sendData2(qint16 adminId, const QByteArray &data);
@@ -105,16 +105,18 @@ namespace delta3
 
         void sendData3(ProtocolMode mode, qint16 adminId, QByteArray data);
 
-        // Запускаеться при коннекте к мастер-серверу, пока
-        // генериться простой md5 (из QTime::currentTime().msec())
+        /*! Запускается при коннекте к мастер-серверу, пока
+         *  генериться простой md5 (из QTime::currentTime().msec())
+        */
         void onConnect();
 
         // Запускаеться при дисконнекте
         void onDisconnect();
 
-        // Запускаеться при входящем сообщении
-        // Сортирует сообщения
-        // и кидает необходимому обработчику
+        /*! Запускается при входящем сообщении
+         * Сортирует сообщения
+         * и кидает необходимому обработчику
+         */
         void onDataReceived();
     };
 }

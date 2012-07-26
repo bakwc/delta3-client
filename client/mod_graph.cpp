@@ -3,8 +3,8 @@
 #include <QTimer>
 namespace delta3
 {
-    mod_graph::mod_graph(QObject *parent, quint16 adminId)
-        : mod_abstract(parent, adminId)
+    Mod_graph::Mod_graph(QObject *parent, quint16 adminId)
+        : Mod_abstract(parent, adminId)
     {
         const quint16 QUALITY = 20;
 
@@ -23,7 +23,7 @@ namespace delta3
         timer->start(1000);
     }
 
-    void mod_graph::incomeMessage(const QByteArray &data)
+    void Mod_graph::incomeMessage(const QByteArray &data)
     {
         qDebug() << "IncomeMessage()" << data.toHex();
         switch(data[0]){
@@ -37,23 +37,23 @@ namespace delta3
         }
     }
 
-    void mod_graph::sendPix(QByteArray &byteImg)
+    void Mod_graph::sendPix(QByteArray &byteImg)
     {
         emit messageReadyRead(MOD_GRAPH, _adminId, byteImg);
     }
 
-    void mod_graph::close()
+    void Mod_graph::close()
     {
         this->disconnect();
     }
 
-    void mod_graph::mouseMove(const QByteArray& data){
+    void Mod_graph::mouseMove(const QByteArray& data){
         quint16 x = fromBytes<quint16>(data.mid(1,2));
         quint16 y = fromBytes<quint16>(data.mid(3,2));
         QCursor::setPos(x*2, y*2);
     }
 
-    void mod_graph::mouseClick(const QByteArray& data)
+    void Mod_graph::mouseClick(const QByteArray& data)
     {
 
         quint16 x = fromBytes<quint16>(data.mid(1,2));
@@ -84,7 +84,7 @@ namespace delta3
     #endif
     }
 
-    void mod_graph::screentick()
+    void Mod_graph::screentick()
     {
         _byteImage.clear();
         _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());

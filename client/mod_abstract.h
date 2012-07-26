@@ -6,12 +6,12 @@
 namespace delta3
 {
 //------------------------------------------------------------------------------
-class mod_abstract: public QObject
+class Mod_abstract: public QObject
 {
     Q_OBJECT
 //------------------------------------------------------------------------------
 public:
-    explicit mod_abstract(QObject *, quint16);
+    explicit Mod_abstract(QObject *, quint16);
     virtual void incomeMessage(const QByteArray &) = 0;
     virtual void close() = 0;
     //--------------------------------------------------------------------------

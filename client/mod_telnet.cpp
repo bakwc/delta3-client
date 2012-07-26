@@ -3,8 +3,8 @@
 
 namespace delta3
 {
-    mod_telnet::mod_telnet(QObject *parent, quint16 adminId_)
-        : mod_abstract(parent, adminId_)
+    Mod_telnet::Mod_telnet(QObject *parent, quint16 adminId_)
+        : Mod_abstract(parent, adminId_)
     {
         _protocol = new QProcess(this);
     #ifdef Q_WS_X11
@@ -30,7 +30,7 @@ namespace delta3
         );
     }
 
-    void mod_telnet::incomeMessage(const QByteArray &data)
+    void Mod_telnet::incomeMessage(const QByteArray &data)
     {
 
         QString cmd = QString::fromUtf8(data);
@@ -40,13 +40,13 @@ namespace delta3
             _protocol->write(cmd.toLocal8Bit());
     }
 
-    void mod_telnet::close()
+    void Mod_telnet::close()
     {
         _protocol->disconnect(this);
         _protocol->close();
     }
 
-    void mod_telnet::protocolMessage()
+    void Mod_telnet::protocolMessage()
     {
         QString output = QString::fromLocal8Bit(_protocol->readAllStandardOutput());
         qDebug() << "proto3 output:\n" << output.toUtf8();
