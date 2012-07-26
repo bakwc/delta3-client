@@ -343,6 +343,11 @@ namespace delta3
                 test2.insert(adminId, newone);
                 break;
             }
+
+            case MOD_PROXY:{
+                qDebug() << "MOD_PROXY";
+            }
+
             default:
                 break;
             }
