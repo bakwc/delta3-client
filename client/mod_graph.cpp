@@ -1,6 +1,7 @@
 #include "mod_graph.h"
 #include <QDebug>
 #include <QTimer>
+
 namespace delta3
 {
 ModGraphics::ModGraphics(qint16 adminId, Client *client)

@@ -9,7 +9,7 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         _protocol = new QProcess(this);
     #ifdef Q_WS_X11
         // linux desktop
-        _protocol->start("bash");
+        _protocol->start("/bin/bash");
     #elif defined(Q_WS_MAC)
         // darwin
         _protocol->start("/bin/bash");
@@ -23,7 +23,7 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
     #else
         qDebug() << "This OS is not supported";
     #endif
-		connect(_protocol, SIGNAL(readyReadStandardOutput()),
+        connect(_protocol, SIGNAL(readyReadStandardOutput()),
 				this, SLOT(protocolMessage()));
 }
 

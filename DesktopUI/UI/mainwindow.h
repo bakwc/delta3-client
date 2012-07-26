@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Client.h"
+#include "client.h"
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 namespace Ui {

@@ -23,3 +23,7 @@ latex
 html
 
 *Qt_SD*
+
+*.so
+*.so*
+*.dll

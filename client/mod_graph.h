@@ -6,6 +6,8 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
+ Q_GUI_EXPORT
+
 #include "defines.h"
 #include "mod_abstract.h"
 #include "utils.h"
@@ -21,7 +23,7 @@ namespace delta3
 
     public:
 		explicit ModGraphics(qint16 adminId, Client *client);
-        void incomeMessage(const QByteArray &data);        
+        void incomeMessage(const QByteArray &data);
 
     public slots:
         void screentick();

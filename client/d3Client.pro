@@ -4,29 +4,25 @@
 #
 #-------------------------------------------------
 
-QT       += core network gui
+QT += core network gui
 
-TARGET = client
-TEMPLATE = app
+TARGET = delta3client
+TEMPLATE = lib
+DESTDIR = ..
 win32:DEFINES += "WINVER=0x0500"
 
 QMAKE_CXXFLAGS += -std=c++0x
 
-SOURCES += main.cpp \
-    UI/mainwindow.cpp \
-    Client.cpp \
+SOURCES += \
+    client.cpp \
     mod_telnet.cpp \
     mod_graph.cpp \
     mod_abstract.cpp
 
 HEADERS += \
-    Client.h \
-    UI/mainwindow.h \
+    client.h \
     defines.h \
     mod_telnet.h \
     mod_graph.h \
     utils.h \
     mod_abstract.h
-
-
-FORMS    += UI/mainwindow.ui
