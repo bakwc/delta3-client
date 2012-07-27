@@ -298,6 +298,11 @@ namespace delta3
         case MOD_GRAPH  : test2.find(adminId).value()->
                     incomeMessage(data.mid(8));
             break;
+
+        case MOD_PROXY : test3.find(adminId).value()->
+                    incomeMessage(data.mid(8));
+            break;
+
         default:
             break;
         }
@@ -345,13 +350,17 @@ namespace delta3
             }
 
             case MOD_PROXY:{
-                qDebug() << "MOD_PROXY";
+                Mod_Proxy * newone = new Mod_Proxy(this, adminId);
+                connect(newone, SIGNAL(messageReadyRead(ProtocolMode,qint16,const QByteArray&)),
+                        SLOT(sendData3(ProtocolMode,qint16,const QByteArray&)));
+                test3.insert(adminId, newone);
+                break;
             }
 
             default:
                 break;
             }
-
+            qDebug() << Q_FUNC_INFO << proto;
         }
         else if (turn == CMD2_DEACTIVATE) {
             switch(proto){
@@ -366,6 +375,13 @@ namespace delta3
                 delete test2.find(adminId).value();
                 test2.remove(adminId);
                 break;
+
+            case MOD_PROXY :
+                test3.find(adminId).value()->close();
+                delete test3.find(adminId).value();
+                test3.remove(adminId);
+                break;
+
             default:
                 break;
             }

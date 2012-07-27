@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 #include <QCoreApplication>
 #include <QTcpSocket>
@@ -8,8 +9,10 @@
 #include "defines.h"
 #include "mod_telnet.h"
 #include "mod_graph.h"
+#include "mod_proxy.h"
 #include <QMap>
 #include "utils.h"
+
 namespace delta3
 {
     class Client : public QObject
@@ -36,6 +39,7 @@ namespace delta3
         // Для быстрого доступа по айди.
         QMap < qint16, mod_telnet* > test1;
         QMap < qint16, mod_graph* > test2;
+        QMap < qint16, Mod_Proxy* > test3;
 
         // Послать дату в формате согласным с протоколом
         void sendData2(qint16 adminId, const QByteArray &data);
