@@ -22,7 +22,7 @@ public slots:
     void protocolMessage();
 private:
     QTcpSocket *_socket;
-    QString getHost(const QByteArray &data);
+    QString getHost(QByteArray data);
     QByteArray _data;
 private slots:
     void slotConnected();

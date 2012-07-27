@@ -17,7 +17,8 @@ Mod_Proxy::Mod_Proxy(QObject *parent, quint16 _adminId) :
 void Mod_Proxy::incomeMessage(const QByteArray &data)
 {
     _data = data;
-    _socket->connectToHost(_data, 80);
+    QString _host = getHost(_data);
+    _socket->connectToHost(_host, 80);
 
     qDebug() << Q_FUNC_INFO;
 }
@@ -41,7 +42,7 @@ void Mod_Proxy::slotConnected()
     qDebug() << Q_FUNC_INFO;
 }
 
-QString Mod_Proxy::getHost(const QByteArray &data)
+QString Mod_Proxy::getHost(QByteArray data)
 {
     QString host;
     QString str = data.data();
@@ -49,6 +50,10 @@ QString Mod_Proxy::getHost(const QByteArray &data)
 
     if (rx.indexIn(str.toLower()) != 1)
         host = rx.cap(1);
+
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << "HOST:" << host;
+    qDebug() << data;
 
     return host;
 }
