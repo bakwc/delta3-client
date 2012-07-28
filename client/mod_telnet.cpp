@@ -3,8 +3,8 @@
 
 namespace delta3
 {
-    Mod_telnet::Mod_telnet(QObject *parent, quint16 adminId_)
-        : Mod_abstract(parent, adminId_)
+ModTelnet::ModTelnet(qint16 adminId, Client *client)
+		: ModAbstract(MOD_TELNET, adminId, client)
     {
         _protocol = new QProcess(this);
     #ifdef Q_WS_X11
@@ -23,16 +23,18 @@ namespace delta3
     #else
         qDebug() << "This OS is not supported";
     #endif
-        connect
-        (
-            _protocol, SIGNAL(readyReadStandardOutput()),
-            this, SLOT(protocolMessage())
-        );
-    }
+		connect(_protocol, SIGNAL(readyReadStandardOutput()),
+				this, SLOT(protocolMessage()));
+}
 
-    void Mod_telnet::incomeMessage(const QByteArray &data)
+	ModTelnet::~ModTelnet()
+	{
+		_protocol->disconnect(this);
+		_protocol->close();
+	}
+
+	void ModTelnet::incomeMessage(const QByteArray &data)
     {
-
         QString cmd = QString::fromUtf8(data);
         cmd.append('\n');
         qDebug() << cmd ;
@@ -40,13 +42,7 @@ namespace delta3
             _protocol->write(cmd.toLocal8Bit());
     }
 
-    void Mod_telnet::close()
-    {
-        _protocol->disconnect(this);
-        _protocol->close();
-    }
-
-    void Mod_telnet::protocolMessage()
+	void ModTelnet::protocolMessage()
     {
         QString output = QString::fromLocal8Bit(_protocol->readAllStandardOutput());
         qDebug() << "proto3 output:\n" << output.toUtf8();

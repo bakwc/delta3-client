@@ -1,26 +1,32 @@
 #pragma once
-//------------------------------------------------------------------------------
+
 #include <QObject>
 #include <QByteArray>
-//------------------------------------------------------------------------------
+#include "defines.h"
+
 namespace delta3
 {
-//------------------------------------------------------------------------------
-class Mod_abstract: public QObject
+
+class Client;
+
+class ModAbstract: public QObject
 {
     Q_OBJECT
-//------------------------------------------------------------------------------
+
 public:
-    explicit Mod_abstract(QObject *, quint16);
+	explicit ModAbstract(ProtocolMode mode, qint16 adminId, Client *client);
+	~ModAbstract();
     virtual void incomeMessage(const QByteArray &) = 0;
-    virtual void close() = 0;
-    //--------------------------------------------------------------------------
+
 //    quint16 getAdminId()                                        const;
-//------------------------------------------------------------------------------
+
+signals:
+	void messageReadyRead(ProtocolMode, qint16, QByteArray);
+
 protected:
-    quint16 _adminId;
-//------------------------------------------------------------------------------
+	qint16		_adminId;
+	ProtocolMode mode_;
 };
-//------------------------------------------------------------------------------
+
 } // namespace delta3
-//------------------------------------------------------------------------------
+

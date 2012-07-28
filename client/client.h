@@ -10,6 +10,7 @@
 #include "mod_graph.h"
 #include <QMap>
 #include "utils.h"
+
 namespace delta3
 {
     class Client : public QObject
@@ -24,18 +25,13 @@ namespace delta3
         void parsePing();
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
-    private:
-        QString getOS();
-        QByteArray buf_;
-        QTcpSocket * socket;
-        quint16 port;
-        QHostAddress server;
 
+private:
         // В эти мапы добавляются протоколы
         // при активации их любым их админов
         // Для быстрого доступа по айди.
-        QMap < qint16, Mod_telnet* > test1;
-        QMap < qint16, Mod_graph* > test2;
+		QMap < qint16, ModTelnet* > test1;
+		QMap < qint16, ModGraphics* > test2;
 
         // Послать дату в формате согласным с протоколом
         void sendData2(qint16 adminId, const QByteArray &data);
@@ -105,18 +101,25 @@ namespace delta3
 
         void sendData3(ProtocolMode mode, qint16 adminId, QByteArray data);
 
-        /*! Запускается при коннекте к мастер-серверу, пока
-         *  генериться простой md5 (из QTime::currentTime().msec())
-        */
+        // Запускаеться при коннекте к мастер-серверу, пока
+        // генериться простой md5 (из QTime::currentTime().msec())
         void onConnect();
 
         // Запускаеться при дисконнекте
         void onDisconnect();
 
-        /*! Запускается при входящем сообщении
-         * Сортирует сообщения
-         * и кидает необходимому обработчику
-         */
+        // Запускаеться при входящем сообщении
+        // Сортирует сообщения
+        // и кидает необходимому обработчику
         void onDataReceived();
+
+	private:
+		QString getOS();
+		QByteArray buf_;
+		QTcpSocket * socket;
+		quint16 port;
+		QHostAddress server;
+
+		QMap<ProtocolMode, QMap<qint16, ModAbstract*> > mods_;
     };
 }
