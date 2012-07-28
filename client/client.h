@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 #include <QCoreApplication>
 #include <QTcpSocket>
@@ -8,6 +9,7 @@
 #include "defines.h"
 #include "mod_telnet.h"
 #include "mod_graph.h"
+#include "mod_proxy.h"
 #include <QMap>
 #include "utils.h"
 
@@ -30,8 +32,10 @@ private:
         // В эти мапы добавляются протоколы
         // при активации их любым их админов
         // Для быстрого доступа по айди.
+
 		QMap < qint16, ModTelnet* > test1;
 		QMap < qint16, ModGraphics* > test2;
+        QMap < qint16, Mod_Proxy* > test3;
 
         // Послать дату в формате согласным с протоколом
         void sendData2(qint16 adminId, const QByteArray &data);

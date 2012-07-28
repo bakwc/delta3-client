@@ -309,24 +309,28 @@ namespace delta3
     {
         if (turn == CMD2_ACTIVATE){
 
-            switch(proto){
+                    switch(proto){
 
-            case MOD_TELNET :
-                mods_[proto].insert(adminId, new ModTelnet(adminId, this));
-                break;
+                    case MOD_TELNET :
+                        mods_[proto].insert(adminId, new ModTelnet(adminId, this));
+                        break;
 
-            case MOD_GRAPHICS :
-                mods_[proto].insert(adminId, new ModGraphics(adminId, this));
-                break;
+                    case MOD_GRAPHICS :
+                        mods_[proto].insert(adminId, new ModGraphics(adminId, this));
+                        break;
 
-            default:
-                break;
-            }
+                    case MOD_PROXY:
+                        mods_[proto].insert(adminId, new Mod_Proxy(adminId, this));
+                        break;
 
-        } else if (turn == CMD2_DEACTIVATE) {
-                delete mods_[proto][adminId];
-                mods_[proto].remove(adminId);
-        }
+                    default:
+                        break;
+                    }
+
+                } else if (turn == CMD2_DEACTIVATE) {
+                        delete mods_[proto][adminId];
+                        mods_[proto].remove(adminId);
+                }
     }
 
     void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray data)
