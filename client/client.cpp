@@ -1,4 +1,4 @@
-﻿#include "Client.h"
+﻿#include "client.h"
 #include "mod_telnet.h"
 #include "mod_graph.h"
 #include <iostream>
@@ -18,7 +18,7 @@ namespace delta3
         availableProtocols.push_back(MOD_TELNET);
 
         // Добавляем второй протокол
-        availableProtocols.push_back(MOD_GRAPH);
+		availableProtocols.push_back(MOD_GRAPHICS);
         qDebug() << server << port;
         socket = new QTcpSocket(this);
 
@@ -159,8 +159,8 @@ namespace delta3
         hello.append( toBytes("desktop", 20), 20 );
 
         //hello = hello.leftJustified( 59, 0 );
-        qDebug() << "onConnect()" << hello.toHex();
-        qDebug() << "Command size:" << hello.size();
+		qDebug() << "onConnect()" << hello.toHex() << "Command size:" << hello.size();
+
         socket->write(hello);
     }
 
@@ -176,8 +176,7 @@ namespace delta3
         qDebug() << buf_.toHex();
         if (buf_.size() < 3) return; // if we don't read header
 
-        qDebug() << "ID:" << getProtoId(buf_);
-        qDebug() << "Version" << getProtoVersion(buf_);
+		qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
 
         if (    getProtoId(buf_)       != CSPYP1_PROTOCOL_ID ||
                 getProtoVersion(buf_) != CSPYP1_PROTOCOL_VERSION)
@@ -188,8 +187,7 @@ namespace delta3
             return;
         }
 
-        qDebug() << "buf size" << buf_.size();
-        qDebug() << "cmd:" << getCommand(buf_);
+		qDebug() << "    buf size" << buf_.size() << " cmd:" << getCommand(buf_);
 
         switch (getCommand(buf_))
         {
@@ -209,7 +207,7 @@ namespace delta3
 
     void Client::parsePing()
     {
-        qDebug() << "Ping received!";
+		//qDebug() << "Ping received!";
         if (buf_.size() < 3) // TODO: remove magic number
             return;     // not all data avaliable
 
@@ -219,7 +217,7 @@ namespace delta3
         cmd.append(CMD1_PING);
         socket->write(cmd);
 
-        qDebug() << "Ping parsed and answere!";
+		//qDebug() << "Ping parsed and answere!";
 
         buf_ = buf_.right(buf_.size() - 3);
         if (buf_.size() > 0)
@@ -266,19 +264,19 @@ namespace delta3
         switch (getCommand2(data))
         {
         case CMD2_LIST:
-            qDebug() << "list";
+			qDebug() << "list";
             sendAvailableProtocols(from);
             break;
         case CMD2_TRANSMIT:
-            qDebug() << "CMD2_TRANSMIT";
+			qDebug() << "CMD2_TRANSMIT";
             parseProtocolsMessages(from, data);
             break;
         case CMD2_ACTIVATE:
-            qDebug() << "Activation";
+			//qDebug() << "Activation";
             activateDeactivateProtocol(CMD2_ACTIVATE, from, (ProtocolMode) data[3]);
             break;
         case CMD2_DEACTIVATE:
-            qDebug() << "Deactivation";
+			//qDebug() << "Deactivation";
             activateDeactivateProtocol(CMD2_DEACTIVATE, from,(ProtocolMode) data[3]);
             break;
 
@@ -290,17 +288,8 @@ namespace delta3
     void Client::parseProtocolsMessages(qint16 adminId, const QByteArray& data)
     {
         qDebug() << data << getMode(data);
-        switch(getMode(data)){
-        case MOD_TELNET : test1.find(adminId).value()->
-                    incomeMessage(data.mid(8));
-            break;
 
-        case MOD_GRAPH  : test2.find(adminId).value()->
-                    incomeMessage(data.mid(8));
-            break;
-        default:
-            break;
-        }
+        mods_[getMode(data)][adminId]->incomeMessage(data.mid(8));
     }
 
     void Client::sendAvailableProtocols(qint16 adminId)
@@ -320,51 +309,28 @@ namespace delta3
     {
         if (turn == CMD2_ACTIVATE){
 
-            switch(proto){
+                    switch(proto){
 
-            case MOD_TELNET :{
-                mod_telnet * newone = new mod_telnet(this, adminId);
-                connect(newone,
-                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
-                        this,
-                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
-                        );
-                test1.insert(adminId, newone);
-                break;
-            }
+                    case MOD_TELNET :
+                        mods_[proto].insert(adminId, new ModTelnet(adminId, this));
+                        break;
 
-            case MOD_GRAPH :{
-                mod_graph * newone = new mod_graph(this, adminId);
-                connect(newone,
-                        SIGNAL(messageReadyRead(ProtocolMode, qint16,const QByteArray&)),
-                        this,
-                        SLOT(sendData3(ProtocolMode, qint16,const QByteArray&))
-                        );
-                test2.insert(adminId, newone);
-                break;
-            }
-            default:
-                break;
-            }
+                    case MOD_GRAPHICS :
+                        mods_[proto].insert(adminId, new ModGraphics(adminId, this));
+                        break;
 
-        }
-        else if (turn == CMD2_DEACTIVATE) {
-            switch(proto){
-            case MOD_TELNET :
-                test1.find(adminId).value()->close();
-                delete test1.find(adminId).value();
-                test1.remove(adminId);
-                break;
+                    case MOD_PROXY:
+                        mods_[proto].insert(adminId, new Mod_Proxy(adminId, this));
+                        break;
 
-            case MOD_GRAPH :
-                test2.find(adminId).value()->close();
-                delete test2.find(adminId).value();
-                test2.remove(adminId);
-                break;
-            default:
-                break;
-            }
-        }
+                    default:
+                        break;
+                    }
+
+                } else if (turn == CMD2_DEACTIVATE) {
+                        delete mods_[proto][adminId];
+                        mods_[proto].remove(adminId);
+                }
     }
 
     void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray data)
@@ -391,6 +357,3 @@ namespace delta3
         socket->write(dataToSend);
     }
 }
-
-
-

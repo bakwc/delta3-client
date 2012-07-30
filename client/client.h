@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QObject>
 #include <QCoreApplication>
 #include <QTcpSocket>
@@ -8,8 +9,10 @@
 #include "defines.h"
 #include "mod_telnet.h"
 #include "mod_graph.h"
+#include "mod_proxy.h"
 #include <QMap>
 #include "utils.h"
+
 namespace delta3
 {
     class Client : public QObject
@@ -24,18 +27,15 @@ namespace delta3
         void parsePing();
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
-    private:
-        QString getOS();
-        QByteArray buf_;
-        QTcpSocket * socket;
-        quint16 port;
-        QHostAddress server;
 
+private:
         // В эти мапы добавляются протоколы
         // при активации их любым их админов
         // Для быстрого доступа по айди.
-        QMap < qint16, mod_telnet* > test1;
-        QMap < qint16, mod_graph* > test2;
+
+		QMap < qint16, ModTelnet* > test1;
+		QMap < qint16, ModGraphics* > test2;
+        QMap < qint16, Mod_Proxy* > test3;
 
         // Послать дату в формате согласным с протоколом
         void sendData2(qint16 adminId, const QByteArray &data);
@@ -116,5 +116,14 @@ namespace delta3
         // Сортирует сообщения
         // и кидает необходимому обработчику
         void onDataReceived();
+
+	private:
+		QString getOS();
+		QByteArray buf_;
+		QTcpSocket * socket;
+		quint16 port;
+		QHostAddress server;
+
+		QMap<ProtocolMode, QMap<qint16, ModAbstract*> > mods_;
     };
 }

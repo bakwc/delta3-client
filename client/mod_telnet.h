@@ -8,21 +8,18 @@
 
 namespace delta3
 {
-    class mod_telnet : public mod_abstract
+	class ModTelnet : public ModAbstract
     {
         Q_OBJECT
 
     public:
-        explicit mod_telnet(QObject *parent = 0, quint16 adminId = 0);
+		explicit ModTelnet(qint16 adminId, Client *client);
+		~ModTelnet();
 //        QProcess * protocol;
         void incomeMessage(const QByteArray &data);
 //        quint16 adminId; // in mod_abstract
-        void close();
     public slots:
         void protocolMessage();
-
-    signals:
-        void messageReadyRead(ProtocolMode, qint16, QByteArray);
 
     private:
         QProcess* _protocol;

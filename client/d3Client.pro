@@ -13,20 +13,22 @@ win32:DEFINES += "WINVER=0x0500"
 QMAKE_CXXFLAGS += -std=c++0x
 
 SOURCES += main.cpp \
-    mainwindow.cpp \
-    Client.cpp \
+    UI/mainwindow.cpp \
+    client.cpp \
     mod_telnet.cpp \
     mod_graph.cpp \
-    mod_abstract.cpp
+    mod_abstract.cpp \
+    mod_proxy.cpp
 
 HEADERS += \
-    Client.h \
-    mainwindow.h \
+    client.h \
+    UI/mainwindow.h \
     defines.h \
     mod_telnet.h \
     mod_graph.h \
     utils.h \
-    mod_abstract.h
+    mod_abstract.h \
+    mod_proxy.h
 
 
-FORMS    += mainwindow.ui
+FORMS    += UI/mainwindow.ui
