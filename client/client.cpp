@@ -171,33 +171,33 @@ namespace delta3
 
     void Client::onDataReceived()
     {
-        qDebug() << "onDataReceived():";
+        //qDebug() << "onDataReceived():";
         buf_ += socket->readAll();
         qDebug() << buf_.toHex();
         if (buf_.size() < 3) return; // if we don't read header
 
-		qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
+        //qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
 
         if (    getProtoId(buf_)       != CSPYP1_PROTOCOL_ID ||
                 getProtoVersion(buf_) != CSPYP1_PROTOCOL_VERSION)
         {
             // wrong packet - disconnecting client
-            qDebug() << "PROTOCOL ERROR!";
+            qDebug() << Q_FUNC_INFO << "PROTOCOL ERROR!";
             //this->disconnectFromHost();
             return;
         }
 
-		qDebug() << "    buf size" << buf_.size() << " cmd:" << getCommand(buf_);
+        //qDebug() << "    buf size" << buf_.size() << " cmd:" << getCommand(buf_);
 
         switch (getCommand(buf_))
         {
 
         case CMD1_TRANSMIT:
-            qDebug() << "transmit";
+            //qDebug() << "transmit";
             parseResponse();
             break;
         case CMD1_PING:
-            qDebug() << "ping";
+            //qDebug() << "ping";
             parsePing();
             break;
         default:
@@ -226,7 +226,7 @@ namespace delta3
 
     void Client::parseResponse()
     {
-        qDebug() << "parseResponse()";
+        //qDebug() << "parseResponse()";
         qDebug() << buf_.toHex();
 
         if (buf_.size() < 9) // TODO: remove magic number
@@ -249,8 +249,8 @@ namespace delta3
 
     void Client::parseProtoTwo(qint16 from, const QByteArray &data)
     {
-        qDebug() << "parseProtoTwo():" << data.size();
-        qDebug() << data.toHex();
+        //qDebug() << "parseProtoTwo():" << data.size();
+        //qDebug() << data.toHex();
 
         if (    getProtoId(data)     != CSPYP2_PROTOCOL_ID ||
                 getProtoVersion(data)!= CSPYP2_PROTOCOL_VERSION)
@@ -264,11 +264,11 @@ namespace delta3
         switch (getCommand2(data))
         {
         case CMD2_LIST:
-			qDebug() << "list";
+            //qDebug() << "list";
             sendAvailableProtocols(from);
             break;
         case CMD2_TRANSMIT:
-			qDebug() << "CMD2_TRANSMIT";
+            //qDebug() << "CMD2_TRANSMIT";
             parseProtocolsMessages(from, data);
             break;
         case CMD2_ACTIVATE:
@@ -301,39 +301,38 @@ namespace delta3
         for(short i = 0; i < availableProtocols.size(); ++i){
             protocolList.append(availableProtocols.at(i));
         }
-        qDebug() << "sendAvailableProtocols\n";
-        sendData2(adminId, protocolList);
+        //qDebug() << "sendAvailableProtocols\n";
+        sendLevelOne(adminId, protocolList);
     }
 
     void Client::activateDeactivateProtocol(Cspyp2Command turn, qint16 adminId, ProtocolMode proto)
     {
-        if (turn == CMD2_ACTIVATE){
+        if (turn == CMD2_ACTIVATE) {
+            switch(proto){
 
-                    switch(proto){
+            case MOD_TELNET :
+                mods_[proto].insert(adminId, new ModTelnet(adminId, this));
+                break;
 
-                    case MOD_TELNET :
-                        mods_[proto].insert(adminId, new ModTelnet(adminId, this));
-                        break;
+            case MOD_GRAPHICS :
+                mods_[proto].insert(adminId, new ModGraphics(adminId, this));
+                break;
 
-                    case MOD_GRAPHICS :
-                        mods_[proto].insert(adminId, new ModGraphics(adminId, this));
-                        break;
+            case MOD_PROXY:
+                mods_[proto].insert(adminId, new Mod_Proxy(adminId, this));
+                break;
 
-                    case MOD_PROXY:
-                        mods_[proto].insert(adminId, new Mod_Proxy(adminId, this));
-                        break;
+            default:
+                break;
+            }
 
-                    default:
-                        break;
-                    }
-
-                } else if (turn == CMD2_DEACTIVATE) {
-                        delete mods_[proto][adminId];
-                        mods_[proto].remove(adminId);
-                }
+        } else if (turn == CMD2_DEACTIVATE) {
+            delete mods_[proto][adminId];
+            mods_[proto].remove(adminId);
+        }
     }
 
-    void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray data)
+    void Client::sendLevelTwo(ProtocolMode mode, qint16 adminId, QByteArray data)
     {
         QByteArray buf;
         buf.append(CSPYP2_PROTOCOL_ID);
@@ -342,10 +341,10 @@ namespace delta3
         buf.append(mode);
         buf.append(toBytes(data.size()));
         buf.append(data);
-        sendData2(adminId, buf);
+        sendLevelOne(adminId, buf);
     }
 
-    void Client::sendData2(qint16 adminId, const QByteArray &data)
+    void Client::sendLevelOne(qint16 adminId, const QByteArray &data)
     {
         QByteArray dataToSend;
         dataToSend.append(CSPYP1_PROTOCOL_ID);

@@ -29,4 +29,7 @@ namespace delta3
         res.leftJustified(len, 0, true);
         return res;
     }
+
+    #define toBytesMacro(T) (char*)(&T),sizeof(T)
+
 }

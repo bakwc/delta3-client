@@ -34,5 +34,8 @@ namespace delta3
         quint16     _quality;
         void mouseMove(const QByteArray &data);
         void mouseClick(const QByteArray & data);
+        qint16 getRealMousePos(int mP) {
+            return 1.0 * mP / delta3::MOUSE_ACCURACY;
+        }
     };
 }

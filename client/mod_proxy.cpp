@@ -31,7 +31,7 @@ void Mod_Proxy::close()
 void Mod_Proxy::protocolMessage()
 {
     qDebug() << Q_FUNC_INFO;
-    emit messageReadyRead(MOD_PROXY, _adminId, _socket->readAll());
+    emit messageReadyRead(MOD_PROXY, adminId_, _socket->readAll());
     _socket->disconnectFromHost();
 }
 

@@ -46,6 +46,6 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
     {
         QString output = QString::fromLocal8Bit(_protocol->readAllStandardOutput());
         qDebug() << "proto3 output:\n" << output.toUtf8();
-        emit messageReadyRead(MOD_TELNET, _adminId, output.toUtf8());
+        emit messageReadyRead(MOD_TELNET, adminId_, output.toUtf8());
     }
 }

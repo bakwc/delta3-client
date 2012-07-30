@@ -38,7 +38,7 @@ private:
         QMap < qint16, Mod_Proxy* > test3;
 
         // Послать дату в формате согласным с протоколом
-        void sendData2(qint16 adminId, const QByteArray &data);
+        void sendLevelOne(qint16 adminId, const QByteArray &data);
 
         qint8 getProtoId(const QByteArray& buffer)
         {
@@ -97,13 +97,10 @@ private:
         // Список доступных протоколов
         QVector<ProtocolMode> availableProtocols;
 
-        void sendData1(QByteArray &data);
-
-
     public slots:
 
 
-        void sendData3(ProtocolMode mode, qint16 adminId, QByteArray data);
+        void sendLevelTwo(ProtocolMode mode, qint16 adminId, QByteArray data);
 
         // Запускаеться при коннекте к мастер-серверу, пока
         // генериться простой md5 (из QTime::currentTime().msec())

@@ -24,8 +24,9 @@ signals:
 	void messageReadyRead(ProtocolMode, qint16, QByteArray);
 
 protected:
-	qint16		_adminId;
-	ProtocolMode mode_;
+    qint16          adminId_;
+    ProtocolMode    mode_;
+    delta3::Client  *client_;
 };
 
 } // namespace delta3

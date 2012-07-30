@@ -2,10 +2,10 @@
 #include "client.h"
 
 delta3::ModAbstract::ModAbstract(ProtocolMode mode, qint16 adminId, Client *client)
-	: QObject(client), _adminId(adminId), mode_(mode)
+    : QObject(client), adminId_(adminId), mode_(mode), client_(client)
 {
 	connect(this, SIGNAL(messageReadyRead(ProtocolMode,qint16,QByteArray)),
-			client, SLOT(sendData3(ProtocolMode,qint16,QByteArray)));
+            client, SLOT(sendLevelTwo(ProtocolMode,qint16,QByteArray)));
 
 	qDebug("Activation %i mode", mode_);
 }
