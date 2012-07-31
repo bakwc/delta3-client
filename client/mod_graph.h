@@ -32,10 +32,11 @@ namespace delta3
         QBuffer     _buffer;
         QByteArray  _byteImage;
         quint16     _quality;
+
+        void sendInform();
+
         void mouseMove(const QByteArray &data);
         void mouseClick(const QByteArray & data);
-        qint16 getRealMousePos(int mP) {
-            return 1.0 * mP / delta3::MOUSE_ACCURACY;
-        }
+
     };
 }

@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP-866"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
-	delta3::Client client;
+    delta3::Client client(QHostAddress("193.169.33.254"));
 
 	delta3::MainWindow w(&client);
     return a.exec();

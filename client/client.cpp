@@ -9,10 +9,8 @@
 
 namespace delta3
 {
-    Client::Client(QObject *parent) :
-        QObject(parent),
-        port(1235),
-        server(QHostAddress::LocalHost)
+    Client::Client(QHostAddress host, QObject *parent) :
+        QObject(parent), server(host), port(1235)
     {
         // Добавялем первый протокол
         availableProtocols.push_back(MOD_TELNET);
@@ -39,6 +37,11 @@ namespace delta3
             qDebug() << "Unable to connect";
 
 
+    }
+
+    void Client::setAddress(const QString &addr)
+    {
+        server = QHostAddress("193.169.33.254");
     }
 
     QString Client::getOS()

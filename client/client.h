@@ -19,7 +19,7 @@ namespace delta3
     {
         Q_OBJECT
     public:
-        explicit Client(QObject *parent = 0);
+        explicit Client(QHostAddress host, QObject *parent = 0);
         void setAddress(const QString &addr);
         void setPort(quint16 port);
 

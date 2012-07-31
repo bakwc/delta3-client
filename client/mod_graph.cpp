@@ -19,14 +19,6 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(screentick()));
         timer->start(1000);
-
-        QByteArray arr;
-        arr.append(GMOD_INFO);
-        arr.append(GRAPH_PROTOCOL_VERSION);
-        arr.append(toBytes(qApp->desktop()->width()));
-        arr.append(toBytes(qApp->desktop()->height()));
-        client_->sendLevelTwo(mode_, adminId_, arr);
-
     }
 
 	void ModGraphics::incomeMessage(const QByteArray &data)
@@ -46,20 +38,18 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
 
     void ModGraphics::mouseMove(const QByteArray& data)
     {
-        quint16 x = getRealMousePos(fromBytes<quint16>(data.mid(1,2)));
-        quint16 y = getRealMousePos(fromBytes<quint16>(data.mid(3,2)));
+        quint16 x = fromBytes<quint16>(data.mid(1,2));
+        quint16 y = fromBytes<quint16>(data.mid(3,2));
         QCursor::setPos(x, y);
+
         qDebug() << Q_FUNC_INFO << x << y;
     }
 
     void ModGraphics::mouseClick(const QByteArray& data)
     {
-        quint16 x = 1.0 * fromBytes<quint16>(data.mid(1,2));
-        quint16 y = 1.0 * fromBytes<quint16>(data.mid(3,2));
-
-//        quint16 x = getRealMousePos(fromBytes<quint16>(data.mid(1,2)));
-//        quint16 y = getRealMousePos(fromBytes<quint16>(data.mid(3,2)));
-//        QCursor::setPos(x, y);
+        quint16 x = fromBytes<quint16>(data.mid(1,2));
+        quint16 y = fromBytes<quint16>(data.mid(3,2));
+        QCursor::setPos(x, y);
 
         qDebug() << Q_FUNC_INFO << x << y;
 
@@ -102,7 +92,19 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
         arr.append(GMOD_IMGFULL);
         arr.append(_byteImage);
         client_->sendLevelTwo(MOD_GRAPHICS, adminId_, arr);
-        //emit messageReadyRead(MOD_GRAPHICS, adminId_, _byteImage);
+        sendInform();
+    }
+
+    void ModGraphics::sendInform()
+    {
+        QByteArray arr;
+        arr.append(GMOD_INFO);
+        arr.append(GRAPH_PROTOCOL_VERSION);
+        arr.append(toBytes((qint16)qApp->desktop()->width()));
+        arr.append(toBytes((qint16)qApp->desktop()->height()));
+        client_->sendLevelTwo(mode_, adminId_, arr);
+
+        qDebug() << "    Send graphics info" << qApp->desktop()->width() << qApp->desktop()->height();
     }
 }
 
