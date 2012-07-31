@@ -23,5 +23,7 @@ namespace delta3
 
     private:
         QProcess* _protocol;
+        bool FLAG = FALSE;
+        QString prompt;
     };
 }
