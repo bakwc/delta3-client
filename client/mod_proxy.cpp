@@ -31,7 +31,8 @@ void Mod_Proxy::close()
 void Mod_Proxy::protocolMessage()
 {
     qDebug() << Q_FUNC_INFO;
-    emit messageReadyRead(MOD_PROXY, _adminId, _socket->readAll());
+    QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
+    emit messageReadyRead(MOD_PROXY, _adminId, _data);
     _socket->disconnectFromHost();
 }
 
@@ -42,18 +43,14 @@ void Mod_Proxy::slotConnected()
     qDebug() << Q_FUNC_INFO;
 }
 
-QString Mod_Proxy::getHost(QByteArray data)
+QString Mod_Proxy::getHost(QByteArray _data)
 {
-    QString host;
-    QString str = data.data();
+    QString _host,
+    _str = _data.data();
     QRegExp rx("host\\s*:\\s*([A-Za-z0-9]+)[\n\r]+");
 
     if (rx.indexIn(str.toLower()) != 1)
         host = rx.cap(1);
-
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "HOST:" << host;
-    qDebug() << data;
 
     return host;
 }
