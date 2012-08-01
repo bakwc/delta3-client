@@ -16,8 +16,8 @@ public:
     explicit Mod_Proxy(qint16 adminId, Client *client);
     void incomeMessage(const QByteArray &data);
     void close();
-signals:
-    void messageReadyRead(ProtocolMode, qint16,const QByteArray&);
+//signals:
+    //void messageReadyRead(ProtocolMode, qint16,const QByteArray&);
 public slots:
     void protocolMessage();
 private:

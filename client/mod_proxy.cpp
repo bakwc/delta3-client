@@ -18,10 +18,14 @@ void Mod_Proxy::incomeMessage(const QByteArray &data)
 {
     _data = data;
     QString _host = getHost(_data);
+    if (_socket->state()!=QTcpSocket::UnconnectedState)
+        _socket->disconnectFromHost();
+
     _socket->connectToHost(_host, 80);
 
     qDebug() << Q_FUNC_INFO;
-    qDebug() << _host;
+    qDebug() << "Host: " << _host;
+    qDebug() << "Request: " << _data;
 }
 
 void Mod_Proxy::close()
@@ -32,8 +36,11 @@ void Mod_Proxy::close()
 void Mod_Proxy::protocolMessage()
 {
     QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
+    //QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
     qDebug() << Q_FUNC_INFO << "\n" << _data;
+
     emit messageReadyRead(MOD_PROXY, _adminId, _data);
+
     //_socket->disconnectFromHost();
 }
 
@@ -48,7 +55,7 @@ QString Mod_Proxy::getHost(QByteArray _data)
 {
     QString _host,
             _str = _data.data();
-    QRegExp rx("host\\s*:\\s*([A-Za-z0-9\\.]+)[\\n\\r]+");
+    QRegExp rx("host: ([a-zA-Z0-9\\.\\-]+)");
 
     if (rx.indexIn(_str.toLower()) != 1)
         _host = rx.cap(1);

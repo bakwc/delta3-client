@@ -159,7 +159,7 @@ namespace delta3
         hello.append( toBytes("desktop", 20), 20 );
 
         //hello = hello.leftJustified( 59, 0 );
-		qDebug() << "onConnect()" << hello.toHex() << "Command size:" << hello.size();
+        //qDebug() << "onConnect()" << hello.toHex() << "Command size:" << hello.size();
 
         socket->write(hello);
     }
@@ -171,12 +171,12 @@ namespace delta3
 
     void Client::onDataReceived()
     {
-        qDebug() << "onDataReceived():";
+        //qDebug() << "onDataReceived():";
         buf_ += socket->readAll();
-        qDebug() << buf_.toHex();
+        //qDebug() << buf_.toHex();
         if (buf_.size() < 3) return; // if we don't read header
 
-		qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
+        //qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
 
         if (    getProtoId(buf_)       != CSPYP1_PROTOCOL_ID ||
                 getProtoVersion(buf_) != CSPYP1_PROTOCOL_VERSION)
@@ -187,17 +187,17 @@ namespace delta3
             return;
         }
 
-		qDebug() << "    buf size" << buf_.size() << " cmd:" << getCommand(buf_);
+        //qDebug() << "    buf size" << buf_.size() << " cmd:" << getCommand(buf_);
 
         switch (getCommand(buf_))
         {
 
         case CMD1_TRANSMIT:
-            qDebug() << "transmit";
+            //qDebug() << "transmit";
             parseResponse();
             break;
         case CMD1_PING:
-            qDebug() << "ping";
+            //qDebug() << "ping";
             parsePing();
             break;
         default:
@@ -226,8 +226,8 @@ namespace delta3
 
     void Client::parseResponse()
     {
-        qDebug() << "parseResponse()";
-        qDebug() << buf_.toHex();
+        //qDebug() << "parseResponse()";
+        //qDebug() << buf_.toHex();
 
         if (buf_.size() < 9) // TODO: remove magic number
             return;     // not all data avaliable
@@ -249,8 +249,8 @@ namespace delta3
 
     void Client::parseProtoTwo(qint16 from, const QByteArray &data)
     {
-        qDebug() << "parseProtoTwo():" << data.size();
-        qDebug() << data.toHex();
+        //qDebug() << "parseProtoTwo():" << data.size();
+        //qDebug() << data.toHex();
 
         if (    getProtoId(data)     != CSPYP2_PROTOCOL_ID ||
                 getProtoVersion(data)!= CSPYP2_PROTOCOL_VERSION)
@@ -264,11 +264,11 @@ namespace delta3
         switch (getCommand2(data))
         {
         case CMD2_LIST:
-			qDebug() << "list";
+            //qDebug() << "list";
             sendAvailableProtocols(from);
             break;
         case CMD2_TRANSMIT:
-			qDebug() << "CMD2_TRANSMIT";
+            //qDebug() << "CMD2_TRANSMIT";
             parseProtocolsMessages(from, data);
             break;
         case CMD2_ACTIVATE:
@@ -287,7 +287,7 @@ namespace delta3
 
     void Client::parseProtocolsMessages(qint16 adminId, const QByteArray& data)
     {
-        qDebug() << data << getMode(data);
+       // qDebug() << data << getMode(data);
 
         mods_[getMode(data)][adminId]->incomeMessage(data.mid(8));
     }
@@ -301,7 +301,7 @@ namespace delta3
         for(short i = 0; i < availableProtocols.size(); ++i){
             protocolList.append(availableProtocols.at(i));
         }
-        qDebug() << "sendAvailableProtocols\n";
+        //qDebug() << "sendAvailableProtocols\n";
         sendData2(adminId, protocolList);
     }
 
@@ -335,6 +335,7 @@ namespace delta3
 
     void Client::sendData3(ProtocolMode mode, qint16 adminId, QByteArray data)
     {
+        qDebug() << "Level 3 message will fly!";
         QByteArray buf;
         buf.append(CSPYP2_PROTOCOL_ID);
         buf.append(CSPYP2_PROTOCOL_VERSION);
@@ -347,6 +348,7 @@ namespace delta3
 
     void Client::sendData2(qint16 adminId, const QByteArray &data)
     {
+        qDebug() << "Level 2 message will fly!";
         QByteArray dataToSend;
         dataToSend.append(CSPYP1_PROTOCOL_ID);
         dataToSend.append(CSPYP1_PROTOCOL_VERSION);
