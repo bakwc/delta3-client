@@ -35,8 +35,8 @@ void Mod_Proxy::close()
 
 void Mod_Proxy::protocolMessage()
 {
-    QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
     //QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
+    QByteArray _data = _socket->readAll();
     qDebug() << Q_FUNC_INFO << "\n" << _data;
 
     emit messageReadyRead(MOD_PROXY, _adminId, _data);
