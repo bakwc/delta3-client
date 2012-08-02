@@ -1,5 +1,5 @@
-#include <QRegExp>
 #include <QDebug>
+#include <QRegExp>
 #include <QTcpSocket>
 #include "mod_proxy.h"
 
@@ -18,8 +18,9 @@ void Mod_Proxy::incomeMessage(const QByteArray &data)
 {
     _data = data;
     QString _host = getHost(_data);
-    if (_socket->state()!=QTcpSocket::UnconnectedState)
+    //if (_socket->state()!=QTcpSocket::UnconnectedState)
         _socket->disconnectFromHost();
+
 
     _socket->connectToHost(_host, 80);
 
@@ -37,7 +38,8 @@ void Mod_Proxy::protocolMessage()
 {
     //QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
     QByteArray _data = _socket->readAll();
-    qDebug() << Q_FUNC_INFO << "\n" << _data;
+    _socket->disconnectFromHost();
+    qDebug() << Q_FUNC_INFO << "\n" << _data.data();
 
     emit messageReadyRead(MOD_PROXY, _adminId, _data);
 
