@@ -32,3 +32,5 @@ HEADERS += \
 
 
 FORMS    += UI/mainwindow.ui
+
+LIBS += -lX11 -lXtst

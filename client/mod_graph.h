@@ -5,7 +5,7 @@
 #include <QBuffer>
 #include <QApplication>
 #include <QDesktopWidget>
-
+#include <QBasicTimer>
 #include "defines.h"
 #include "mod_abstract.h"
 #include "utils.h"
@@ -21,10 +21,15 @@ namespace delta3
 
     public:
 		explicit ModGraphics(qint16 adminId, Client *client);
-        void incomeMessage(const QByteArray &data);        
+        void incomeMessage(const QByteArray &data);
 
     public slots:
         void screentick();
+
+    protected:
+        void timerEvent(QTimerEvent *);
+        void clickDownFunc(GMCLICK click, void* dspl);
+        void clickUpFunc(GMCLICK click, void* dspl);
 
     private:
         QString     _format;
@@ -32,6 +37,8 @@ namespace delta3
         QBuffer     _buffer;
         QByteArray  _byteImage;
         quint16     _quality;
+        QBasicTimer timer;
+        bool        init;
 
         void sendInform();
 

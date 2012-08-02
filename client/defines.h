@@ -52,8 +52,8 @@ namespace delta3
 
     enum GMCLICK {
         GMCLICK_LEFT    = 1,
-        GMCLICK_MIDDLE  = 2,
-        GMCLICK_RIGHT   = 4,
+        GMCLICK_RIGHT   = 2,
+        GMCLICK_MIDDLE  = 4,
         GMCLICK_DOWN    = 8,
         GMCLICK_UP      = 16,
         GMCLICK_CLICK   = 32,
