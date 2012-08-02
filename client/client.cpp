@@ -176,7 +176,7 @@ namespace delta3
     {
         //qDebug() << "onDataReceived():";
         buf_ += socket->readAll();
-        qDebug() << buf_.toHex();
+        //qDebug() << buf_.toHex();
         if (buf_.size() < 3) return; // if we don't read header
 
         //qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
@@ -230,7 +230,7 @@ namespace delta3
     void Client::parseResponse()
     {
         //qDebug() << "parseResponse()";
-        qDebug() << buf_.toHex();
+        //qDebug() << buf_.toHex();
 
         if (buf_.size() < 9) // TODO: remove magic number
             return;     // not all data avaliable
@@ -290,7 +290,7 @@ namespace delta3
 
     void Client::parseProtocolsMessages(qint16 adminId, const QByteArray& data)
     {
-        qDebug() << data << getMode(data);
+        //qDebug() << data << getMode(data);
 
         mods_[getMode(data)][adminId]->incomeMessage(data.mid(8));
     }
