@@ -13,23 +13,23 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         proc.start("whoami");
         proc.waitForFinished();
 
-        prompt = QString::fromUtf8(proc.readAll());
-        prompt.chop(1);
-        prompt.append("@");
+        _prompt = QString::fromUtf8(proc.readAll());
+        _prompt.chop(1);
+        _prompt.append("@");
 
         proc.start("hostname");
         proc.waitForFinished();
-        prompt.append(proc.readAll());
+        _prompt.append(proc.readAll());
 
-        prompt.chop(1);
-        prompt.append(':');
+        _prompt.chop(1);
+        _prompt.append(':');
 
         proc.start("pwd");
         proc.waitForFinished();
-        prompt.append(proc.readAll());
-        prompt.chop(1);
+        _prompt.append(proc.readAll());
+        _prompt.chop(1);
 
-        prompt.append("$ ");
+        _prompt.append("$ ");
         _protocol->start("/bin/sh");
     #elif defined(Q_WS_MAC)                     // darwin
         _protocol->start("/bin/bash");
