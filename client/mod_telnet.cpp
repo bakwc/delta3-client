@@ -9,23 +9,38 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         _protocol = new QProcess(this);
     #ifdef Q_WS_X11                             // linux desktop
         //constructing command prompt
-        QByteArray username,hostname;
+        QByteArray username,hostname, pwd;
         QProcess username_proc;
         QProcess hostname_proc;
-        username_proc.start("whoami");
-        username_proc.waitForFinished();
-        username = username_proc.readAll();
-        hostname_proc.start("hostname");
-        hostname_proc.waitForFinished();
-        hostname = hostname_proc.readAll();
-        username_proc.close();
-        hostname_proc.close();
-        prompt = QString::fromUtf8(username);
+        QProcess proc;
+        proc.start("whoami");
+        proc.waitForFinished();
+//        username = proc.readAll();
+//        hostname_proc.start("hostname");
+//        hostname_proc.waitForFinished();
+//        hostname = hostname_proc.readAll();
+//        username_proc.close();
+//        hostname_proc.close();
+        prompt = QString::fromUtf8(proc.readAll());
         prompt.chop(1);
         prompt.append("@");
-        prompt.append(hostname);
+
+        proc.start("hostname");
+        proc.waitForFinished();
+        prompt.append(proc.readAll());
+
+
+
+//        prompt.append(hostname);
         prompt.chop(1);
-        prompt.append(" $ ");
+        prompt.append(':');
+
+        proc.start("pwd");
+        proc.waitForFinished();
+        prompt.append(proc.readAll());
+        prompt.chop(1);
+
+        prompt.append("$ ");
         _protocol->start("/bin/sh");
     #elif defined(Q_WS_MAC)                     // darwin
         _protocol->start("/bin/bash");
