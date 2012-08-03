@@ -20,12 +20,16 @@ public:
     //void messageReadyRead(ProtocolMode, qint16,const QByteArray&);
 public slots:
     void protocolMessage();
-private:
-    QTcpSocket *_socket;
-    QString getHost(QByteArray data);
-    QByteArray _data;
 private slots:
     void slotConnected();
+    void onDisconnect();
+private:
+    QString getHost(QByteArray data);
+    void replaceKeepAlive(QByteArray& data);
+private:
+    QTcpSocket *_socket;
+    QByteArray _data;
+    QByteArray _buff;
 };
 
 }
