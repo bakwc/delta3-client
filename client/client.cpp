@@ -41,7 +41,7 @@ namespace delta3
 
     void Client::setAddress(const QString &addr)
     {
-        server = QHostAddress("193.169.33.254");
+        server = QHostAddress(addr);
     }
 
     QString Client::getOS()

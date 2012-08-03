@@ -28,7 +28,7 @@ void ModGraphics::incomeMessage(const QByteArray &data)
         qDebug() << "GMOD_INFO" << (int)data[2];
         init = true;
         _quality = (quint8)data[2];
-        timer.start(500, this);
+        timer.start(1000, this);
         break;
     case GMOD_IMGFULL : qDebug() << "GMOD_IMGFULL"; break;
     case GMOD_IMGDIFF : qDebug() << "GMOD_IMGDIFF"; break;
@@ -119,7 +119,7 @@ void ModGraphics::screentick()
     _byteImage.clear();
     _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
     _buffer.open(QIODevice::WriteOnly);
-    QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
+    QSize size = QSize(_snapshot.size().width()/6, _snapshot.size().height()/6);
     _snapshot.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
 
     QByteArray arr;
@@ -136,6 +136,8 @@ void ModGraphics::timerEvent(QTimerEvent *ev)
         screentick();
     else
         sendInform();
+
+    ev->accept();
 }
 
 
@@ -182,8 +184,8 @@ void ModGraphics::sendInform()
     QByteArray arr;
     arr.append(GMOD_INFO);
     arr.append(GRAPH_PROTOCOL_VERSION);
-    arr.append(toBytes((qint16)(qApp->desktop()->width()/2)));
-    arr.append(toBytes((qint16)(qApp->desktop()->height()/2)));
+    arr.append(toBytes((qint16)(qApp->desktop()->width())));
+    arr.append(toBytes((qint16)(qApp->desktop()->height())));
     client_->sendLevelTwo(mode_, adminId_, arr);
 }
 

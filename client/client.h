@@ -118,8 +118,8 @@ private:
 		QString getOS();
 		QByteArray buf_;
 		QTcpSocket * socket;
+        QHostAddress server;
 		quint16 port;
-		QHostAddress server;
 
 		QMap<ProtocolMode, QMap<qint16, ModAbstract*> > mods_;
     };
