@@ -119,7 +119,7 @@ void ModGraphics::screentick()
     _byteImage.clear();
     _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
     _buffer.open(QIODevice::WriteOnly);
-    QSize size = QSize(_snapshot.size().width()/6, _snapshot.size().height()/6);
+    QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
     _snapshot.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
 
     QByteArray arr;
