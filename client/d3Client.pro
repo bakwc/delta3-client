@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     mod_telnet.cpp \
     mod_graph.cpp \
     mod_abstract.cpp \
-    mod_proxy.cpp
+    mod_proxy.cpp \
+    modfile.cpp
 
 HEADERS += \
     client.h \
@@ -28,7 +29,8 @@ HEADERS += \
     mod_graph.h \
     utils.h \
     mod_abstract.h \
-    mod_proxy.h
+    mod_proxy.h \
+    mod_file.h
 
 
 FORMS    += UI/mainwindow.ui
