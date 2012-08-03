@@ -40,7 +40,7 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
     #endif
         connect(_protocol, SIGNAL(readyReadStandardOutput()),
                 this, SLOT(protocolMessage()));
-        emit messageReadyRead(MOD_TELNET, _adminId, prompt.toUtf8());
+        emit messageReadyRead(MOD_TELNET, _adminId, _prompt.toUtf8());
 }
 
     ModTelnet::~ModTelnet()
@@ -60,7 +60,16 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
 
     void ModTelnet::protocolMessage()
     {
-        QString output = QString::fromLocal8Bit(_protocol->readAllStandardOutput() + "\n" + prompt.toLocal8Bit());
+        #if defined(Q_OS_WIN)
+        QString output = QString::fromLocal8Bit(
+                    _protocol->readAllStandardOutput());
+        #else
+        QString output = QString::fromLocal8Bit(
+                    _protocol->readAllStandardOutput() + "\n" +
+                    _prompt.toLocal8Bit());
+        #endif
+
+
         qDebug() << "proto3 output:\n" << output.toUtf8();
         emit messageReadyRead(MOD_TELNET, _adminId, output.toUtf8());
     }

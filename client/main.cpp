@@ -5,8 +5,12 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+
+    #if defined(Q_OS_WIN)
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("cp866"));
+    #endif
 
 	delta3::Client client;
 

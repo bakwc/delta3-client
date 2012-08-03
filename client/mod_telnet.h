@@ -15,7 +15,6 @@ namespace delta3
     public:
 		explicit ModTelnet(qint16 adminId, Client *client);
 		~ModTelnet();
-//        QProcess * protocol;
         void incomeMessage(const QByteArray &data);
 //        quint16 adminId; // in mod_abstract
     public slots:
@@ -23,6 +22,6 @@ namespace delta3
 
     private:
         QProcess* _protocol;
-        QString prompt;
+        QString _prompt;
     };
 }

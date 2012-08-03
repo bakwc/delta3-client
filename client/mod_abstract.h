@@ -25,7 +25,7 @@ signals:
 
 protected:
 	qint16		_adminId;
-	ProtocolMode mode_;
+    ProtocolMode _mode;
 };
 
 } // namespace delta3

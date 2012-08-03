@@ -3,7 +3,7 @@
 #include <QTimer>
 namespace delta3
 {
-ModGraphics::ModGraphics(qint16 adminId, Client *client)
+    ModGraphics::ModGraphics(qint16 adminId, Client *client)
 		: ModAbstract(MOD_GRAPHICS, adminId, client)
     {
         const quint16 QUALITY = 20;
