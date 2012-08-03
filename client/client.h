@@ -23,19 +23,33 @@ namespace delta3
         void setAddress(const QString &addr);
         void setPort(quint16 port);
 
-
         void parsePing();
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
 
+    public slots:
+
+        void sendData3(ProtocolMode mode, qint16 adminId, QByteArray data);
+
+        // Запускаеться при коннекте к мастер-серверу, пока
+        // генериться простой md5 (из QTime::currentTime().msec())
+        void onConnect();
+
+        // Запускаеться при дисконнекте
+        void onDisconnect();
+
+        // Запускаеться при входящем сообщении
+        // Сортирует сообщения
+        // и кидает необходимому обработчику
+        void onDataReceived();
 private:
         // В эти мапы добавляются протоколы
         // при активации их любым их админов
         // Для быстрого доступа по айди.
 
-		QMap < qint16, ModTelnet* > test1;
-		QMap < qint16, ModGraphics* > test2;
-        QMap < qint16, Mod_Proxy* > test3;
+        //QMap < qint16, ModTelnet* > test1;
+        //QMap < qint16, ModGraphics* > test2;  ?? Нигде не используется
+        //QMap < qint16, Mod_Proxy* > test3;
 
         // Послать дату в формате согласным с протоколом
         void sendData2(qint16 adminId, const QByteArray &data);
@@ -94,36 +108,16 @@ private:
         // и деактивации протоколов 3 уровня
         void activateDeactivateProtocol(Cspyp2Command turn, qint16 adminId, ProtocolMode proto);
 
-        // Список доступных протоколов
-        QVector<ProtocolMode> availableProtocols;
+        QString getOS();
 
-        void sendData1(QByteArray &data);
-
-
-    public slots:
-
-
-        void sendData3(ProtocolMode mode, qint16 adminId, QByteArray data);
-
-        // Запускаеться при коннекте к мастер-серверу, пока
-        // генериться простой md5 (из QTime::currentTime().msec())
-        void onConnect();
-
-        // Запускаеться при дисконнекте
-        void onDisconnect();
-
-        // Запускаеться при входящем сообщении
-        // Сортирует сообщения
-        // и кидает необходимому обработчику
-        void onDataReceived();
+        //void sendData1(QByteArray &data);
 
 	private:
-		QString getOS();
-		QByteArray buf_;
-		QTcpSocket * socket;
-		quint16 port;
-		QHostAddress server;
-
-		QMap<ProtocolMode, QMap<qint16, ModAbstract*> > mods_;
+        QByteArray _buf;
+        QTcpSocket *_socket;
+        quint16 _port;
+        QHostAddress _server;
+        QVector<ProtocolMode> _availableProtocols; // Список доступных протоколов
+        QMap<ProtocolMode, QMap<qint16, ModAbstract*> > _mods;
     };
 }

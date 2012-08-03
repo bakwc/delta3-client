@@ -9,18 +9,10 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         _protocol = new QProcess(this);
     #ifdef Q_WS_X11                             // linux desktop
         //constructing command prompt
-        QByteArray username,hostname, pwd;
-        QProcess username_proc;
-        QProcess hostname_proc;
         QProcess proc;
         proc.start("whoami");
         proc.waitForFinished();
-//        username = proc.readAll();
-//        hostname_proc.start("hostname");
-//        hostname_proc.waitForFinished();
-//        hostname = hostname_proc.readAll();
-//        username_proc.close();
-//        hostname_proc.close();
+
         prompt = QString::fromUtf8(proc.readAll());
         prompt.chop(1);
         prompt.append("@");
@@ -29,9 +21,6 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         proc.waitForFinished();
         prompt.append(proc.readAll());
 
-
-
-//        prompt.append(hostname);
         prompt.chop(1);
         prompt.append(':');
 
@@ -55,7 +44,7 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
     #endif
         connect(_protocol, SIGNAL(readyReadStandardOutput()),
                 this, SLOT(protocolMessage()));
-        emit messageReadyRead(MOD_TELNET, _adminId, prompt.toUtf8());
+        emit messageReadyRead(MOD_TELNET, _adminId, _prompt.toUtf8());
 }
 
     ModTelnet::~ModTelnet()
@@ -75,7 +64,16 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
 
     void ModTelnet::protocolMessage()
     {
-        QString output = QString::fromLocal8Bit(_protocol->readAllStandardOutput() + "\n" + prompt.toLocal8Bit());
+        #if defined(Q_OS_WIN)
+        QString output = QString::fromLocal8Bit(
+                    _protocol->readAllStandardOutput());
+        #else
+        QString output = QString::fromLocal8Bit(
+                    _protocol->readAllStandardOutput() + "\n" +
+                    _prompt.toLocal8Bit());
+        #endif
+
+
         qDebug() << "proto3 output:\n" << output.toUtf8();
         emit messageReadyRead(MOD_TELNET, _adminId, output.toUtf8());
     }
