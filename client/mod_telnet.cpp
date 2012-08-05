@@ -1,4 +1,5 @@
 #include "mod_telnet.h"
+#include <QtAlgorithms>
 #include <QDebug>
 
 namespace delta3
@@ -9,27 +10,6 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         _protocol = new QProcess(this);
     #ifdef Q_WS_X11                             // linux desktop
         //constructing command prompt
-        QProcess proc;
-        proc.start("whoami");
-        proc.waitForFinished();
-
-        _prompt = QString::fromUtf8(proc.readAll());
-        _prompt.chop(1);
-        _prompt.append("@");
-
-        proc.start("hostname");
-        proc.waitForFinished();
-        _prompt.append(proc.readAll());
-
-        _prompt.chop(1);
-        _prompt.append(':');
-
-        proc.start("pwd");
-        proc.waitForFinished();
-        _prompt.append(proc.readAll());
-        _prompt.chop(1);
-
-        _prompt.append("$ ");
         _protocol->start("/bin/sh");
     #elif defined(Q_WS_MAC)                     // darwin
         _protocol->start("/bin/bash");
@@ -44,7 +24,7 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
     #endif
         connect(_protocol, SIGNAL(readyReadStandardOutput()),
                 this, SLOT(protocolMessage()));
-        emit messageReadyRead(MOD_TELNET, _adminId, _prompt.toUtf8());
+        emit messageReadyRead(MOD_TELNET, _adminId, createPrompt().toUtf8());
 }
 
     ModTelnet::~ModTelnet()
@@ -69,12 +49,42 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
                     _protocol->readAllStandardOutput());
         #else
         QString output = QString::fromLocal8Bit(
-                    _protocol->readAllStandardOutput() + "\n" +
-                    _prompt.toLocal8Bit());
+                    _protocol->readAll() + "\n" +
+                    createPrompt().toAscii().data());
         #endif
 
 
         qDebug() << "proto3 output:\n" << output.toUtf8();
         emit messageReadyRead(MOD_TELNET, _adminId, output.toUtf8());
+    }
+
+
+    QString ModTelnet::createPrompt()
+    {
+        QString str;
+
+        proc_.start("whoami");
+        proc_.waitForFinished();
+        str.append(proc_.readAll());
+        str.chop(1);
+        str.append('@');
+
+        proc_.start("hostname");
+        proc_.waitForFinished();
+        str.append(proc_.readAll());
+        str.chop(1);
+        str.append(':');
+
+        proc_.start("pwdx " + QString::number((qint64)_protocol->pid()));
+        proc_.waitForFinished();
+
+        QString pwdx(proc_.readAll());
+        pwdx.remove(QRegExp("^[0-9]{1,}: "));
+        str.append(pwdx);
+        str.chop(1);
+
+        str.append("$ ");
+
+        return str;
     }
 }
