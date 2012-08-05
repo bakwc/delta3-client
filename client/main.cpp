@@ -5,11 +5,14 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP-866"));
+
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
-    delta3::Client client(QHostAddress("46.247.149.149"));
-    //delta3::Client client(QHostAddress::LocalHost);
+#if defined(Q_OS_WIN)
+QTextCodec::setCodecForLocale(QTextCodec::codecForName("cp866"));
+#endif
+
+    delta3::Client client(QHostAddress::LocalHost);
 
 	delta3::MainWindow w(&client);
     return a.exec();

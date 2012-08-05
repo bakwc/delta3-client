@@ -1,5 +1,5 @@
-#include <QRegExp>
 #include <QDebug>
+#include <QRegExp>
 #include <QTcpSocket>
 #include "mod_proxy.h"
 
@@ -12,15 +12,25 @@ Mod_Proxy::Mod_Proxy(qint16 adminId, Client *client) :
 
     connect(_socket, SIGNAL(readyRead()), SLOT(protocolMessage()));
     connect(_socket, SIGNAL(connected()), SLOT(slotConnected()));
+    connect(_socket,SIGNAL(disconnected()),SLOT(onDisconnect()));
+    //connect(_socket,SIGNAL(   ),SLOT(onDisconnect));
 }
 
 void Mod_Proxy::incomeMessage(const QByteArray &data)
 {
     _data = data;
     QString _host = getHost(_data);
+    //if (_socket->state()!=QTcpSocket::UnconnectedState)
+    _socket->disconnectFromHost();
+    _buff.clear();
+
+    replaceKeepAlive(_data);
+
     _socket->connectToHost(_host, 80);
 
     qDebug() << Q_FUNC_INFO;
+    qDebug() << "Request host" << _host;
+    //qDebug() << "Request: " << _data;
 }
 
 void Mod_Proxy::close()
@@ -30,9 +40,31 @@ void Mod_Proxy::close()
 
 void Mod_Proxy::protocolMessage()
 {
+    //QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
+    QByteArray _data = _socket->readAll();
+
+//    qDebug() << Q_FUNC_INFO;
+//<<<<<<< HEAD
+//    emit messageReadyRead(MOD_PROXY, adminId_, _socket->readAll());
+//    _socket->disconnectFromHost();
+//=======
+//    qDebug() << "Packet len:" << _data.length();
+    _buff += _data;
+//    qDebug() << "Buff len:" << _buff.length();
+
+    //_socket->disconnectFromHost();
+    //qDebug() << Q_FUNC_INFO << "\n" << _data.data();
+
+    //emit messageReadyRead(MOD_PROXY, _adminId, _data);
+
+    //_socket->disconnectFromHost();
+}
+
+void Mod_Proxy::onDisconnect()
+{
     qDebug() << Q_FUNC_INFO;
-    emit messageReadyRead(MOD_PROXY, adminId_, _socket->readAll());
-    _socket->disconnectFromHost();
+    emit messageReadyRead(MOD_PROXY, adminId_, _buff);
+//>>>>>>> develop
 }
 
 void Mod_Proxy::slotConnected()
@@ -42,21 +74,23 @@ void Mod_Proxy::slotConnected()
     qDebug() << Q_FUNC_INFO;
 }
 
-QString Mod_Proxy::getHost(QByteArray data)
+QString Mod_Proxy::getHost(QByteArray _data)
 {
-    QString host;
-    QString str = data.data();
-    QRegExp rx("host\\s*:\\s*([A-Za-z0-9]+)[\n\r]+");
+    QString _host,
+            _str = _data.data();
+    QRegExp rx("host: ([a-zA-Z0-9\\.\\-]+)");
 
-    if (rx.indexIn(str.toLower()) != 1)
-        host = rx.cap(1);
+    if (rx.indexIn(_str.toLower()) != 1)
+        _host = rx.cap(1);
 
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "HOST:" << host;
-    qDebug() << data;
-
-    return host;
+    return _host;
 }
+
+ void Mod_Proxy::replaceKeepAlive(QByteArray& data)
+ {// TODO: fix 4 universal
+     //int n=data.indexOf("Proxy-Connection: keep-alive");
+     data.replace("Proxy-Connection: keep-alive","Connection: close");
+ }
 
 
 }

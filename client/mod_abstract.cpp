@@ -7,14 +7,14 @@ delta3::ModAbstract::ModAbstract(ProtocolMode mode, qint16 adminId, Client *clie
 	connect(this, SIGNAL(messageReadyRead(ProtocolMode,qint16,QByteArray)),
             client, SLOT(sendLevelTwo(ProtocolMode,qint16,QByteArray)));
 
-	qDebug("Activation %i mode", mode_);
+    qDebug("Activation %i mode", mode_);
 }
 
 delta3::ModAbstract::~ModAbstract()
 {
 	disconnect();
 
-	qDebug("Deactivation %i mode", mode_);
+    qDebug("Deactivation %i mode", mode_);
 }
 
 /*

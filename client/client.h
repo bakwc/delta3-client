@@ -23,20 +23,11 @@ namespace delta3
         void setAddress(const QString &addr);
         void setPort(quint16 port);
 
-
         void parsePing();
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
 
 private:
-        // В эти мапы добавляются протоколы
-        // при активации их любым их админов
-        // Для быстрого доступа по айди.
-
-		QMap < qint16, ModTelnet* > test1;
-		QMap < qint16, ModGraphics* > test2;
-        QMap < qint16, Mod_Proxy* > test3;
-
         // Послать дату в формате согласным с протоколом
         void sendLevelOne(qint16 adminId, const QByteArray &data);
 
@@ -94,8 +85,7 @@ private:
         // и деактивации протоколов 3 уровня
         void activateDeactivateProtocol(Cspyp2Command turn, qint16 adminId, ProtocolMode proto);
 
-        // Список доступных протоколов
-        QVector<ProtocolMode> availableProtocols;
+        QString getOS();
 
     public slots:
 
@@ -113,14 +103,14 @@ private:
         // Сортирует сообщения
         // и кидает необходимому обработчику
         void onDataReceived();
+        //void sendData1(QByteArray &data);
 
 	private:
-		QString getOS();
-		QByteArray buf_;
-		QTcpSocket * socket;
-        QHostAddress server;
-		quint16 port;
-
-		QMap<ProtocolMode, QMap<qint16, ModAbstract*> > mods_;
+        QByteArray _buf;
+        QTcpSocket *_socket;
+        quint16 _port;
+        QHostAddress _server;
+        QVector<ProtocolMode> _availableProtocols; // Список доступных протоколов
+        QMap<ProtocolMode, QMap<qint16, ModAbstract*> > _mods;
     };
 }

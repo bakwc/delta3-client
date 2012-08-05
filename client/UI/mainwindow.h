@@ -23,9 +23,9 @@ private slots:
      void showHide(QSystemTrayIcon::ActivationReason);
 
 private:
-	 Client * cl;
-	 QSystemTrayIcon *myIco;
-	 Ui::MainWindow *ui;
+     Client *_cl;
+     QSystemTrayIcon *_myIco;
+     Ui::MainWindow *_ui;
 };
 
 }
