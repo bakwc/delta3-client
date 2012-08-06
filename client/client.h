@@ -19,7 +19,7 @@ namespace delta3
     {
         Q_OBJECT
     public:
-        explicit Client(QObject *parent = 0);
+        explicit Client(QHostAddress host, QObject *parent = 0);
         void setAddress(const QString &addr);
         void setPort(quint16 port);
 
@@ -27,32 +27,9 @@ namespace delta3
         void parseResponse();
         void parseProtoTwo(qint16 from, const QByteArray &data);
 
-    public slots:
-
-        void sendData3(ProtocolMode mode, qint16 adminId, QByteArray data);
-
-        // Запускаеться при коннекте к мастер-серверу, пока
-        // генериться простой md5 (из QTime::currentTime().msec())
-        void onConnect();
-
-        // Запускаеться при дисконнекте
-        void onDisconnect();
-
-        // Запускаеться при входящем сообщении
-        // Сортирует сообщения
-        // и кидает необходимому обработчику
-        void onDataReceived();
 private:
-        // В эти мапы добавляются протоколы
-        // при активации их любым их админов
-        // Для быстрого доступа по айди.
-
-        //QMap < qint16, ModTelnet* > test1;
-        //QMap < qint16, ModGraphics* > test2;  ?? Нигде не используется
-        //QMap < qint16, Mod_Proxy* > test3;
-
         // Послать дату в формате согласным с протоколом
-        void sendData2(qint16 adminId, const QByteArray &data);
+        void sendLevelOne(qint16 adminId, const QByteArray &data);
 
         qint8 getProtoId(const QByteArray& buffer)
         {
@@ -110,6 +87,22 @@ private:
 
         QString getOS();
 
+    public slots:
+
+
+        void sendLevelTwo(ProtocolMode mode, qint16 adminId, QByteArray data);
+
+        // Запускаеться при коннекте к мастер-серверу, пока
+        // генериться простой md5 (из QTime::currentTime().msec())
+        void onConnect();
+
+        // Запускаеться при дисконнекте
+        void onDisconnect();
+
+        // Запускаеться при входящем сообщении
+        // Сортирует сообщения
+        // и кидает необходимому обработчику
+        void onDataReceived();
         //void sendData1(QByteArray &data);
 
 	private:

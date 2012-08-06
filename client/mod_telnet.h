@@ -22,6 +22,9 @@ namespace delta3
 
     private:
         QProcess* _protocol;
-        QString _prompt;
+        QString   _prompt;
+
+        QProcess proc_;
+        QString createPrompt();
     };
 }

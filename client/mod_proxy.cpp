@@ -43,10 +43,14 @@ void Mod_Proxy::protocolMessage()
     //QByteArray _data = QVariant(QString(_socket->readAll() + "\n")).toByteArray();
     QByteArray _data = _socket->readAll();
 
-    qDebug() << Q_FUNC_INFO;
-    qDebug() << "Packet len:" << _data.length();
-    _buff+=_data;
-    qDebug() << "Buff len:" << _buff.length();
+//    qDebug() << Q_FUNC_INFO;
+//<<<<<<< HEAD
+//    emit messageReadyRead(MOD_PROXY, adminId_, _socket->readAll());
+//    _socket->disconnectFromHost();
+//=======
+//    qDebug() << "Packet len:" << _data.length();
+    _buff += _data;
+//    qDebug() << "Buff len:" << _buff.length();
 
     //_socket->disconnectFromHost();
     //qDebug() << Q_FUNC_INFO << "\n" << _data.data();
@@ -59,7 +63,8 @@ void Mod_Proxy::protocolMessage()
 void Mod_Proxy::onDisconnect()
 {
     qDebug() << Q_FUNC_INFO;
-    emit messageReadyRead(MOD_PROXY, _adminId, _buff);
+    emit messageReadyRead(MOD_PROXY, adminId_, _buff);
+//>>>>>>> develop
 }
 
 void Mod_Proxy::slotConnected()
