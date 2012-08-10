@@ -60,17 +60,4 @@ namespace delta3
         GMCLICK_DCLICK  = 64
     };
 
-    enum FileMode
-    {
-        FMOD_INFO       = 1,
-        FMOD_CD         = 2,
-        FMOD_DIR        = 3,
-        FMOD_DOWNINFO   = 4,
-        FMOD_DOWNLOAD   = 5,
-        FMOD_RENAME     = 6,
-        FMOD_DEL        = 7,
-        FMOD_COPYTO     = 8,
-        FMOD_MOVETO     = 9,
-        FMOD_READY      = 101
-    };
 }

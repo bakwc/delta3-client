@@ -19,7 +19,7 @@ SOURCES += main.cpp \
     mod_graph.cpp \
     mod_abstract.cpp \
     mod_proxy.cpp \
-    modfile.cpp
+    mod_file.cpp
 
 HEADERS += \
     client.h \

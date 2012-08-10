@@ -108,8 +108,8 @@ private:
 	private:
         QByteArray _buf;
         QTcpSocket *_socket;
-        quint16 _port;
         QHostAddress _server;
+        quint16 _port;
         QVector<ProtocolMode> _availableProtocols; // Список доступных протоколов
         QMap<ProtocolMode, QMap<qint16, ModAbstract*> > _mods;
     };

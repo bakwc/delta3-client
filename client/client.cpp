@@ -1,6 +1,7 @@
 ﻿#include "client.h"
 #include "mod_telnet.h"
 #include "mod_graph.h"
+#include "mod_file.h"
 #include <iostream>
 #include <QCryptographicHash>
 #include <QTime>
@@ -299,6 +300,11 @@ namespace delta3
             case MOD_PROXY:
                 _mods[proto].insert(adminId, new Mod_Proxy(adminId, this));
                 break;
+
+            case MOD_FILE:
+                _mods[proto].insert(adminId, new ModFile(adminId, this));
+                break;
+
             default:
                 break;
             }
