@@ -1,4 +1,5 @@
 #include "mod_telnet.h"
+#include <client.h>
 #include <QtAlgorithms>
 #include <QDebug>
 
@@ -24,7 +25,15 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
     #endif
         connect(_protocol, SIGNAL(readyReadStandardOutput()),
                 this, SLOT(protocolMessage()));
-        emit messageReadyRead(MOD_TELNET, adminId_, createPrompt().toUtf8());
+
+#ifdef Q_WS_X11
+        QByteArray send;
+        send.append((quint8)TMOD_RESP);
+        send.append( createData(createPrompt()) );
+        sendData(send);
+
+        //qDebug() << QString::fromUtf8(send.mid(
+#endif
 }
 
     ModTelnet::~ModTelnet()
@@ -35,11 +44,17 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
 
     void ModTelnet::incomeMessage(const QByteArray &data)
     {
-        QString cmd = QString::fromUtf8(data);
-        cmd.append('\n');
-        qDebug() << cmd ;
-        if(_protocol->Running)
-            _protocol->write(cmd.toLocal8Bit());
+        qDebug() << Q_FUNC_INFO << (quint8)data[0];
+
+        switch ((quint8)data[0]) {
+        case TMOD_REQ: {
+            int size = fromBytes<quint32>(data.mid(1, 4));
+            QString cmd = QString::fromUtf8(data.mid(5, size)) + '\n';
+
+            if (_protocol->Running)
+                _protocol->write(cmd.toLocal8Bit());
+        }
+        }
     }
 
     void ModTelnet::protocolMessage()
@@ -48,14 +63,14 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         QString output = QString::fromLocal8Bit(
                     _protocol->readAllStandardOutput());
         #else
-        QString output = QString::fromLocal8Bit(
-                    _protocol->readAll() + "\n" +
-                    createPrompt().toAscii().data());
+        QString output = QString::fromLocal8Bit(_protocol->readAll()) + createPrompt();
         #endif
 
+        QByteArray send;
+        send.append((quint8)TMOD_RESP);
+        send.append( createData(output) );
 
-        qDebug() << "proto3 output:\n" << output.toUtf8();
-        emit messageReadyRead(MOD_TELNET, adminId_, output.toUtf8());
+        sendData(send);
     }
 
 
