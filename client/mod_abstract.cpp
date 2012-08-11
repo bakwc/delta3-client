@@ -24,3 +24,8 @@ delta3::mod_abstract::getAdminId()                          const
 }
 */
 
+
+void delta3::ModAbstract::sendData(const QByteArray &arr)
+{
+    client_->sendLevelTwo(mode_, adminId_, arr);
+}
