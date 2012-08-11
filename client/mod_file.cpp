@@ -32,6 +32,7 @@ void ModFile::incomeMessage(const QByteArray &data)
             QByteArray filename = fileList.at(id).fileName().toUtf8();
             send.append(toBytes<quint16>((quint16)filename.size()));
             send.append(filename);
+            send.append(fileList.at(id).isDir() ? '\1' : '\0');
         }
 
         client_->sendLevelTwo(mode_, adminId_, send);
