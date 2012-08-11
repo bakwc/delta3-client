@@ -27,6 +27,8 @@ protected:
     qint16          adminId_;
     ProtocolMode    mode_;
     delta3::Client  *client_;
+
+    void sendData(const QByteArray &arr);
 };
 
 } // namespace delta3
