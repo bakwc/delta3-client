@@ -171,10 +171,7 @@ namespace delta3
     void Client::onDataReceived()
     {
         _buf += _socket->readAll();
-        //qDebug() << buf_.toHex();
         if (_buf.size() < 3) return; // if we don't read header
-
-        //qDebug() << "    ID:" << getProtoId(buf_) << " Version" << getProtoVersion(buf_);
 
         if (getProtoId(_buf) != CSPYP1_PROTOCOL_ID ||
                 getProtoVersion(_buf) != CSPYP1_PROTOCOL_VERSION)
@@ -241,7 +238,7 @@ namespace delta3
                 getProtoVersion(data)!= CSPYP2_PROTOCOL_VERSION)
         {
             // wrong packet - disconnecting client
-            qDebug() << "PROTOCOL ERROR!";
+            qDebug() << Q_FUNC_INFO << "PROTOCOL ERROR!";
             //this->disconnectFromHost();
             return;
         }

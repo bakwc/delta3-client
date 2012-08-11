@@ -31,8 +31,6 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
         send.append((quint8)TMOD_RESP);
         send.append( createData(createPrompt()) );
         sendData(send);
-
-        //qDebug() << QString::fromUtf8(send.mid(
 #endif
 }
 
@@ -44,8 +42,6 @@ ModTelnet::ModTelnet(qint16 adminId, Client *client)
 
     void ModTelnet::incomeMessage(const QByteArray &data)
     {
-        qDebug() << Q_FUNC_INFO << (quint8)data[0];
-
         switch ((quint8)data[0]) {
         case TMOD_REQ: {
             int size = fromBytes<quint32>(data.mid(1, 4));

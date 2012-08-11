@@ -14,14 +14,14 @@ ModFile::ModFile(qint16 adminId, Client *client) :
 
 void ModFile::incomeMessage(const QByteArray &data)
 {
-    QByteArray send;
-
     switch (data[0]) {
     case FMOD_INFO:
         // data[1] // version
 
         break;
     case FMOD_CD: {
+        QByteArray send;
+
         dir_.setPath(QString::fromUtf8(data.mid(1)));
         const QFileInfoList &fileList = dir_.entryInfoList();
 
@@ -35,9 +35,11 @@ void ModFile::incomeMessage(const QByteArray &data)
             send.append(fileList.at(id).isDir() ? '\1' : '\0');
         }
 
-        client_->sendLevelTwo(mode_, adminId_, send);
+        sendData(send);
+//        client_->sendLevelTwo(mode_, adminId_, send);
 
-        break; }
+        break;
+    }
     case FMOD_DOWNINFO:
 
         break;
@@ -68,7 +70,8 @@ void ModFile::timerEvent(QTimerEvent *ev) {
     send.append((quint8)FMOD_INFO);
     send.append(VERSION);
 
-    client_->sendLevelTwo(mode_, adminId_, send);
+    sendData(send);
+//    client_->sendLevelTwo(mode_, adminId_, send);
 
     killTimer(ev->timerId());
 }

@@ -24,10 +24,8 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
 
 void ModGraphics::incomeMessage(const QByteArray &data)
 {
-    //qDebug() << "IncomeMessage()" << data.toHex();
     switch(data[0]){
     case GMOD_INFO    :
-        qDebug() << "GMOD_INFO" << (int)data[2];
         init = true;
         _quality = (quint8)data[2];
         timer.start(1000, this);
@@ -36,11 +34,9 @@ void ModGraphics::incomeMessage(const QByteArray &data)
     case GMOD_IMGDIFF : qDebug() << "GMOD_IMGDIFF"; break;
     case GMOD_KEYEV   : qDebug() << "GMOD_KEYEV"; break;
     case GMOD_MMOV    :
-        qDebug() << "GMOD_MMOV";
         mouseMove(data);
         break;
     case GMOD_MCLICK  :
-        qDebug() << "GMOD_MCLICK";
         mouseClick(data);
         break;
     default : break;
@@ -52,10 +48,7 @@ void ModGraphics::mouseMove(const QByteArray& data)
 {
     quint16 x = fromBytes<quint16>(data.mid(1,2));
     quint16 y = fromBytes<quint16>(data.mid(3,2));
-    QCursor::setPos(x, y);
-
-    qDebug() << Q_FUNC_INFO << x << y;
-}
+    QCursor::setPos(x, y);}
 
 
 void ModGraphics::mouseClick(const QByteArray& data)
@@ -64,8 +57,6 @@ void ModGraphics::mouseClick(const QByteArray& data)
     quint16 y = fromBytes<quint16>(data.mid(3,2));
     GMCLICK click = static_cast<GMCLICK>(data[5]);
     QCursor::setPos(x, y);
-
-    //qDebug() << Q_FUNC_INFO << x << y << click;
 
 #ifdef Q_OS_WIN
 
@@ -127,7 +118,8 @@ void ModGraphics::screentick()
     QByteArray arr;
     arr.append(GMOD_IMGFULL);
     arr.append(_byteImage);
-    client_->sendLevelTwo(MOD_GRAPHICS, adminId_, arr);
+    sendData(arr);
+//    client_->sendLevelTwo(MOD_GRAPHICS, adminId_, arr);
 }
 
 
@@ -147,16 +139,13 @@ void ModGraphics::clickDownFunc(GMCLICK click, void *dspl)
 {
 #ifdef Q_WS_X11
     if (click & GMCLICK_LEFT) {
-        XTestFakeButtonEvent((Display*)dspl, 1, 1, 200);
-        qDebug() << "DOWN LEFT";
+        XTestFakeButtonEvent((Display*)dspl, 1, 1, 100);
     }
     if (click & GMCLICK_MIDDLE) {
-        XTestFakeButtonEvent((Display*)dspl, 2, 1, 200);
-        qDebug() << "DOWN MIDDLE";
+        XTestFakeButtonEvent((Display*)dspl, 2, 1, 100);
     }
     if (click & GMCLICK_RIGHT) {
-        XTestFakeButtonEvent((Display*)dspl, 3, 1, 200);
-        qDebug() << "DOWN RIGHT";
+        XTestFakeButtonEvent((Display*)dspl, 3, 1, 100);
     }
 #endif
 }
@@ -166,16 +155,13 @@ void ModGraphics::clickUpFunc(GMCLICK click, void *dspl)
 {
 #ifdef Q_WS_X11
     if (click & GMCLICK_LEFT) {
-        XTestFakeButtonEvent((Display*)dspl, 1, 0, 200);
-        qDebug() << "UP LEFT";
+        XTestFakeButtonEvent((Display*)dspl, 1, 0, 100);
     }
     if (click & GMCLICK_MIDDLE) {
-        XTestFakeButtonEvent((Display*)dspl, 2, 0, 200);
-        qDebug() << "UP MIDDLE";
+        XTestFakeButtonEvent((Display*)dspl, 2, 0, 100);
     }
     if (click & GMCLICK_RIGHT) {
-        XTestFakeButtonEvent((Display*)dspl, 3, 0, 200);
-        qDebug() << "UP RIGHT";
+        XTestFakeButtonEvent((Display*)dspl, 3, 0, 100);
     }
 #endif
 }
@@ -188,7 +174,8 @@ void ModGraphics::sendInform()
     arr.append(GRAPH_PROTOCOL_VERSION);
     arr.append(toBytes((qint16)(qApp->desktop()->width())));
     arr.append(toBytes((qint16)(qApp->desktop()->height())));
-    client_->sendLevelTwo(mode_, adminId_, arr);
+    sendData(arr);
+//    client_->sendLevelTwo(mode_, adminId_, arr);
 }
 
 }
