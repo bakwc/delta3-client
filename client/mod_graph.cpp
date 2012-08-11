@@ -3,7 +3,9 @@
 #include <QDebug>
 #include <QTimer>
 #include <QTimerEvent>
+#ifdef Q_WS_X11
 #include <X11/extensions/XTest.h> // clicks for linux
+#endif
 
 namespace delta3
 {
