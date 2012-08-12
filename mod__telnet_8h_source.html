@@ -85,7 +85,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;QObject&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;QProcess&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;utils.h&quot;</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;mod_abstract.h&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;defines.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
@@ -98,23 +98,42 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#ab0d6c9f8a2cca145646c8a0daea948c9">ModTelnet</a>(qint16 adminId, <a class="code" href="classdelta3_1_1_client.html">Client</a> *client);</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="classdelta3_1_1_mod_telnet.html#af34c46f4fa08179b8af8d79147b15bcd">~ModTelnet</a>();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#af5cacf6caa7fb3ba655a57d8ebb6870f">incomeMessage</a>(<span class="keyword">const</span> QByteArray &amp;data);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">//        quint16 adminId; // in mod_abstract</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">public</span> slots:</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#a8f72e8f9570e013eef327c7f6a3bae80">protocolMessage</a>();</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        QProcess* _protocol;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        QString   _prompt;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        QProcess proc_;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        QString createPrompt();</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    };</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddc">   19</a></span>&#160;        <span class="keyword">enum</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddc">TelnetMode</a> {</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddcac62c323aeb05e4ba76405fed36a8c3d8">   20</a></span>&#160;            <a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddcac62c323aeb05e4ba76405fed36a8c3d8">TMOD_REQ</a>    = 1,</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddca5045a24c6f0a66e8f43106f278c3d30b">   21</a></span>&#160;            <a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddca5045a24c6f0a66e8f43106f278c3d30b">TMOD_RESP</a>   = 2,</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddcad03ad0335baefedd7c861ca87fc48332">   22</a></span>&#160;            <a class="code" href="classdelta3_1_1_mod_telnet.html#a3bec659919d9eaa189ccfad782d7eddcad03ad0335baefedd7c861ca87fc48332">TMOD_CMD</a>    = 3</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        };</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83e">   25</a></span>&#160;        <span class="keyword">enum</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83e">TMODCMD</a> {</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83ea4b21b62d7bf2033a5368c57329c961ab">   26</a></span>&#160;            <a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83ea4b21b62d7bf2033a5368c57329c961ab">TMODCMD_BREAK</a>   = 1,</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83ea3f14bd0cc4d7936da9f33163216bd92d">   27</a></span>&#160;            <a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83ea3f14bd0cc4d7936da9f33163216bd92d">TMODCMD_UP</a>      = 11,</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83eaadc435bf46ab5143b82b6882b52ddba5">   28</a></span>&#160;            <a class="code" href="classdelta3_1_1_mod_telnet.html#a053fbd11d670ce08154a131dd53dc83eaadc435bf46ab5143b82b6882b52ddba5">TMODCMD_DOWN</a>    = 12</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        };</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#af5cacf6caa7fb3ba655a57d8ebb6870f">incomeMessage</a>(<span class="keyword">const</span> QByteArray &amp;data);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">//        quint16 adminId; // in mod_abstract</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">public</span> slots:</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classdelta3_1_1_mod_telnet.html#a8f72e8f9570e013eef327c7f6a3bae80">protocolMessage</a>();</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        QProcess* _protocol;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        QString   _prompt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        QProcess proc_;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        QString createPrompt();</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        QByteArray createData(<span class="keyword">const</span> QString &amp;data) {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            QByteArray send, arr = data.toUtf8();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            send.append(toBytes&lt;quint32&gt;(arr.size()));</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            send.append(arr);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordflow">return</span> send;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    };</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 8 2012 04:36:20 for Delta3 Client by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 12 2012 11:15:37 for Delta3 Client by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

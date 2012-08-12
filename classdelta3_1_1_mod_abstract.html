@@ -88,6 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classdelta3_1_1_mod_abstract-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -103,8 +104,9 @@ Inheritance diagram for delta3::ModAbstract:</div>
   <img src="classdelta3_1_1_mod_abstract.png" usemap="#delta3::ModAbstract_map" alt=""/>
   <map id="delta3::ModAbstract_map" name="delta3::ModAbstract_map">
 <area href="classdelta3_1_1_mod___proxy.html" alt="delta3::Mod_Proxy" shape="rect" coords="0,56,128,80"/>
-<area href="classdelta3_1_1_mod_graphics.html" alt="delta3::ModGraphics" shape="rect" coords="138,56,266,80"/>
-<area href="classdelta3_1_1_mod_telnet.html" alt="delta3::ModTelnet" shape="rect" coords="276,56,404,80"/>
+<area href="classdelta3_1_1_mod_file.html" alt="delta3::ModFile" shape="rect" coords="138,56,266,80"/>
+<area href="classdelta3_1_1_mod_graphics.html" alt="delta3::ModGraphics" shape="rect" coords="276,56,404,80"/>
+<area href="classdelta3_1_1_mod_telnet.html" alt="delta3::ModTelnet" shape="rect" coords="414,56,542,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -117,6 +119,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a72d9d2530049e7226f072ee8437ecf33"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdelta3_1_1_mod_abstract.html#a72d9d2530049e7226f072ee8437ecf33">ModAbstract</a> (<a class="el" href="namespacedelta3.html#a137f5faa3e56bfe04e5db6f306df4827">ProtocolMode</a> mode, qint16 adminId, <a class="el" href="classdelta3_1_1_client.html">Client</a> *client)</td></tr>
 <tr class="memitem:aa33230ac0cb5d1e9b55508877f94e42e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdelta3_1_1_mod_abstract.html#aa33230ac0cb5d1e9b55508877f94e42e">~ModAbstract</a> ()</td></tr>
 <tr class="memitem:a78ac1dda687e746b1631b33c2b5ddf8a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdelta3_1_1_mod_abstract.html#a78ac1dda687e746b1631b33c2b5ddf8a">incomeMessage</a> (const QByteArray &amp;)=0</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a3325c20e569f06cd97132ed18a782269"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdelta3_1_1_mod_abstract.html#a3325c20e569f06cd97132ed18a782269">sendData</a> (const QByteArray &amp;arr)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -210,7 +216,7 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classdelta3_1_1_mod_graphics.html#a724787dd159d9d126e150d3da59172f6">delta3::ModGraphics</a>, <a class="el" href="classdelta3_1_1_mod_telnet.html#af5cacf6caa7fb3ba655a57d8ebb6870f">delta3::ModTelnet</a>, and <a class="el" href="classdelta3_1_1_mod___proxy.html#a308ead90183145d493e7ab53ab145e3e">delta3::Mod_Proxy</a>.</p>
+<p>Implemented in <a class="el" href="classdelta3_1_1_mod_file.html#a6187ae82a8d0f0bf5f8ebde713d6e143">delta3::ModFile</a>, <a class="el" href="classdelta3_1_1_mod_telnet.html#af5cacf6caa7fb3ba655a57d8ebb6870f">delta3::ModTelnet</a>, <a class="el" href="classdelta3_1_1_mod_graphics.html#a724787dd159d9d126e150d3da59172f6">delta3::ModGraphics</a>, and <a class="el" href="classdelta3_1_1_mod___proxy.html#a308ead90183145d493e7ab53ab145e3e">delta3::Mod_Proxy</a>.</p>
 
 </div>
 </div>
@@ -251,6 +257,32 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a3325c20e569f06cd97132ed18a782269"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void delta3::ModAbstract::sendData </td>
+          <td>(</td>
+          <td class="paramtype">const QByteArray &amp;&#160;</td>
+          <td class="paramname"><em>arr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="mod__abstract_8cpp_source.html#l00028">28</a> of file <a class="el" href="mod__abstract_8cpp_source.html">mod_abstract.cpp</a>.</p>
 
 </div>
 </div>
@@ -328,7 +360,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 8 2012 04:36:20 for Delta3 Client by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Aug 12 2012 11:15:38 for Delta3 Client by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
