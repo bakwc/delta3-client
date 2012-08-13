@@ -38,17 +38,24 @@ void ModFile::incomeMessage(const QByteArray &data)
         sendData(send);
 //        client_->sendLevelTwo(mode_, adminId_, send);
 
-        break;
-    }
+        break; }
     case FMOD_DOWNINFO:
 
         break;
     case FMOD_DOWNLOAD:
 
         break;
-    case FMOD_RENAME:
+    case FMOD_RENAME: {
+        int sourceSize = fromBytes<quint16>(data.mid(1, 2));
+        QString source = QString::fromUtf8(data.mid(3, sourceSize));
+        int destSize   = fromBytes<quint16>(data.mid(sourceSize+3, 2));
+        QString dest   = QString::fromUtf8(data.mid(sourceSize+5, destSize));
 
-        break;
+        qDebug() << dir_.absoluteFilePath(source) << dir_.absoluteFilePath(dest);
+
+        QFile::rename(dir_.absoluteFilePath(source), dir_.absoluteFilePath(dest));
+
+        break; }
     case FMOD_DEL:
 
         break;
@@ -56,6 +63,10 @@ void ModFile::incomeMessage(const QByteArray &data)
 
         break;
     case FMOD_MOVETO:
+
+        break;
+
+    case FMOD_DOWNREQ:
 
         break;
     case FMOD_READY:

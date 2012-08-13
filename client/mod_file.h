@@ -26,6 +26,7 @@ public:
         FMOD_DEL        = 7,
         FMOD_COPYTO     = 8,
         FMOD_MOVETO     = 9,
+        FMOD_DOWNREQ    = 10,
         FMOD_READY      = 101
     };
 
