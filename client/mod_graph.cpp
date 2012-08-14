@@ -17,7 +17,7 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
     _buffer.setBuffer(&_byteImage);
     _buffer.open(QIODevice::WriteOnly);
     _quality = QUALITY;
-    _format = "PNG";
+    _format = "png";
 
     timer.start(100, this);
 }
@@ -110,16 +110,64 @@ void ModGraphics::mouseClick(const QByteArray& data)
 void ModGraphics::screentick()
 {
     _byteImage.clear();
-    _snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+    //_snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
+    _snap1 = QPixmap::grabWindow(QApplication::desktop()->winId()).toImage();
     _buffer.open(QIODevice::WriteOnly);
-    QSize size = QSize(_snapshot.size().width()/2, _snapshot.size().height()/2);
-    _snapshot.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation).save(&_buffer, _format.toLocal8Bit(), _quality);
+    QSize size = QSize(_snap1.size().width()/2, _snap1.size().height()/2);
+    _snap1 = _snap1.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    //.save(&_buffer, _format.toLocal8Bit());
+
+    QSize iSize(0, 0);
+    int         imgStrctCount = 0;
+    QByteArray  imgStruct;
+
+    while (iSize.width() < size.width()) {
+        while (iSize.height() < size.height()) {
+            int x = size.width() - iSize.width();
+            int y = size.height() - iSize.height();
+
+            if (x >= 64 && y >= 64) {
+                const QImage &img1 = _snap1.copy(iSize.width(), iSize.height(), 64, 64);
+                const QImage &img2 = _snap2.copy(iSize.width(), iSize.height(), 64, 64);
+
+                if ( sendDiffImage(img1, img2, iSize, imgStruct) )
+                    imgStrctCount += 1;
+            }
+
+            iSize += QSize(0, 64);
+        }
+        iSize.setHeight(0);
+        iSize += QSize(64, 0);
+    }
 
     QByteArray arr;
-    arr.append(GMOD_IMGFULL);
-    arr.append(_byteImage);
+    arr.append(GMOD_IMG);
+    arr.append((quint8)imgStrctCount);
+    arr.append(imgStruct);
     sendData(arr);
-//    client_->sendLevelTwo(MOD_GRAPHICS, adminId_, arr);
+
+    qDebug() << Q_FUNC_INFO << imgStrctCount;
+}
+
+
+bool ModGraphics::sendDiffImage(const QImage &pix1, const QImage &pix2, const QSize &size, QByteArray &arr)
+{
+//    if (pix1 == pix2)
+//        return false;
+
+    pix1.save(&_buffer, _format.toLocal8Bit());
+
+    QByteArray array;
+    array.append(toBytes((quint16)size.width()));
+    array.append(toBytes((quint16)size.height()));;
+    array.append(toBytes((quint16)_byteImage.size()));
+    array.append(_byteImage);
+
+    arr.append(array);
+
+    qDebug() << Q_FUNC_INFO << _byteImage.size() << size.width() << size.height();
+
+    return true;
 }
 
 
