@@ -9,14 +9,14 @@
 
 namespace delta3
 {
+
+quint8 ModGraphics::IMGSIZE = 64; // Fucking cpp syntax
+
 ModGraphics::ModGraphics(qint16 adminId, Client *client)
     : ModAbstract(MOD_GRAPHICS, adminId, client), init(false)
 {
     const quint16 QUALITY = 20;
 
-    //_byteImage.reserve(1024*10);
-    //_buffer.setBuffer(&_byteImage);
-    //_buffer.open(QIODevice::WriteOnly);
     _quality = QUALITY;
     _format = "png";
 
@@ -29,7 +29,7 @@ void ModGraphics::incomeMessage(const QByteArray &data)
     case GMOD_INFO    :
         init = true;
         _quality = (quint8)data[2];
-        timer.start(100, this);
+        timer.start(50, this);
         break;
     case GMOD_IMGFULL : qDebug() << "GMOD_IMGFULL"; break;
     case GMOD_IMGDIFF : qDebug() << "GMOD_IMGDIFF"; break;
@@ -116,7 +116,6 @@ void ModGraphics::screentick()
     //_buffer.open(QIODevice::WriteOnly);
     QSize size = QSize(_snap1.size().width()/2, _snap1.size().height()/2);
     _snap1 = _snap1.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    //.save(&_buffer, _format.toLocal8Bit());
 
     QSize iSize(0, 0);
     int         imgStrctCount = 0;
@@ -127,19 +126,39 @@ void ModGraphics::screentick()
             int x = size.width() - iSize.width();
             int y = size.height() - iSize.height();
 
-            if (x >= 64 && y >= 64) {
-                const QImage &img1 = _snap1.copy(iSize.width(), iSize.height(), 64, 64);
-                const QImage &img2 = _snap2.copy(iSize.width(), iSize.height(), 64, 64);
+            if (x >= IMGSIZE && y >= IMGSIZE) {
+                const QImage &img1 = _snap1.copy(iSize.width(), iSize.height(), IMGSIZE, IMGSIZE);
+                const QImage &img2 = _snap2.copy(iSize.width(), iSize.height(), IMGSIZE, IMGSIZE);
+
+                if ( sendDiffImage(img1, img2, iSize, imgStruct) )
+                    imgStrctCount += 1;
+            } else if (x < IMGSIZE && y >= IMGSIZE) {
+                const QImage &img1 = _snap1.copy(iSize.width(), iSize.height(), x, IMGSIZE);
+                const QImage &img2 = _snap2.copy(iSize.width(), iSize.height(), x, IMGSIZE);
+
+                if ( sendDiffImage(img1, img2, iSize, imgStruct) )
+                    imgStrctCount += 1;
+            } else if (x >= IMGSIZE && y < IMGSIZE) {
+                const QImage &img1 = _snap1.copy(iSize.width(), iSize.height(), IMGSIZE, y);
+                const QImage &img2 = _snap2.copy(iSize.width(), iSize.height(), IMGSIZE, y);
+
+                if ( sendDiffImage(img1, img2, iSize, imgStruct) )
+                    imgStrctCount += 1;
+            } else {
+                const QImage &img1 = _snap1.copy(iSize.width(), iSize.height(), x, y);
+                const QImage &img2 = _snap2.copy(iSize.width(), iSize.height(), x, y);
 
                 if ( sendDiffImage(img1, img2, iSize, imgStruct) )
                     imgStrctCount += 1;
             }
 
-            iSize += QSize(0, 64);
+            iSize += QSize(0, IMGSIZE);
         }
         iSize.setHeight(0);
-        iSize += QSize(64, 0);
+        iSize += QSize(IMGSIZE, 0);
     }
+
+    _snap1.swap(_snap2);
 
     QByteArray arr;
     arr.append(GMOD_IMG);
@@ -147,7 +166,7 @@ void ModGraphics::screentick()
     arr.append(imgStruct);
     sendData(arr);
 
-    qDebug() << Q_FUNC_INFO << imgStrctCount;
+    qDebug() << Q_FUNC_INFO << imgStrctCount << arr.size();
 }
 
 
@@ -170,12 +189,12 @@ bool ModGraphics::sendDiffImage(const QImage &pix1, const QImage &pix2, const QS
 
     arr.append(array);
 
-    int x, y, s;
-    x = fromBytes<quint16>(array.mid(0, 2));
-    y = fromBytes<quint16>(array.mid(2, 2));
-    s = fromBytes<quint16>(array.mid(4, 2));
+//    int x, y, s;
+//    x = fromBytes<quint16>(array.mid(0, 2));
+//    y = fromBytes<quint16>(array.mid(2, 2));
+//    s = fromBytes<quint16>(array.mid(4, 2));
 
-    qDebug() << Q_FUNC_INFO << s << x << y;
+//    qDebug() << Q_FUNC_INFO << s << x << y;
 
     return true;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <QPixmap>
+#include <QImage>
 #include <QBuffer>
 #include <QApplication>
 #include <QDesktopWidget>
@@ -18,6 +18,8 @@ namespace delta3
 	class ModGraphics : public ModAbstract
     {
         Q_OBJECT
+
+        static quint8 IMGSIZE;
 
     public:
 		explicit ModGraphics(qint16 adminId, Client *client);
@@ -54,11 +56,10 @@ namespace delta3
 
     private:
         QString     _format;
-        QPixmap     _snapshot;
         QImage      _snap1;
         QImage      _snap2;
-        QBuffer     _buffer;
-        QByteArray  _byteImage;
+//        QBuffer     _buffer;
+//        QByteArray  _byteImage;
         quint16     _quality;
         QBasicTimer timer;
         bool        init;
