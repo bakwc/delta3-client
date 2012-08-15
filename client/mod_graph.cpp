@@ -14,8 +14,9 @@ ModGraphics::ModGraphics(qint16 adminId, Client *client)
 {
     const quint16 QUALITY = 20;
 
-    _buffer.setBuffer(&_byteImage);
-    _buffer.open(QIODevice::WriteOnly);
+    //_byteImage.reserve(1024*10);
+    //_buffer.setBuffer(&_byteImage);
+    //_buffer.open(QIODevice::WriteOnly);
     _quality = QUALITY;
     _format = "png";
 
@@ -28,7 +29,7 @@ void ModGraphics::incomeMessage(const QByteArray &data)
     case GMOD_INFO    :
         init = true;
         _quality = (quint8)data[2];
-        timer.start(1000, this);
+        timer.start(100, this);
         break;
     case GMOD_IMGFULL : qDebug() << "GMOD_IMGFULL"; break;
     case GMOD_IMGDIFF : qDebug() << "GMOD_IMGDIFF"; break;
@@ -109,10 +110,10 @@ void ModGraphics::mouseClick(const QByteArray& data)
 
 void ModGraphics::screentick()
 {
-    _byteImage.clear();
+    //_byteImage.clear();
     //_snapshot = QPixmap::grabWindow(QApplication::desktop()->winId());
     _snap1 = QPixmap::grabWindow(QApplication::desktop()->winId()).toImage();
-    _buffer.open(QIODevice::WriteOnly);
+    //_buffer.open(QIODevice::WriteOnly);
     QSize size = QSize(_snap1.size().width()/2, _snap1.size().height()/2);
     _snap1 = _snap1.scaled(size,Qt::KeepAspectRatio, Qt::SmoothTransformation);
     //.save(&_buffer, _format.toLocal8Bit());
@@ -142,7 +143,7 @@ void ModGraphics::screentick()
 
     QByteArray arr;
     arr.append(GMOD_IMG);
-    arr.append((quint8)imgStrctCount);
+    arr.append(toBytes((quint16)imgStrctCount));
     arr.append(imgStruct);
     sendData(arr);
 
@@ -152,20 +153,29 @@ void ModGraphics::screentick()
 
 bool ModGraphics::sendDiffImage(const QImage &pix1, const QImage &pix2, const QSize &size, QByteArray &arr)
 {
-//    if (pix1 == pix2)
-//        return false;
+    if (pix1 == pix2)
+        return false;
 
-    pix1.save(&_buffer, _format.toLocal8Bit());
+    QByteArray byteImage;
+    //byteImage.reserve(1024 * 10);
+    QBuffer buffer(&byteImage);
+    buffer.open(QIODevice::WriteOnly);
+    pix1.save(&buffer, _format.toLocal8Bit());
 
     QByteArray array;
     array.append(toBytes((quint16)size.width()));
-    array.append(toBytes((quint16)size.height()));;
-    array.append(toBytes((quint16)_byteImage.size()));
-    array.append(_byteImage);
+    array.append(toBytes((quint16)size.height()));
+    array.append(toBytes((quint16)byteImage.size()));
+    array.append(byteImage);
 
     arr.append(array);
 
-    qDebug() << Q_FUNC_INFO << _byteImage.size() << size.width() << size.height();
+    int x, y, s;
+    x = fromBytes<quint16>(array.mid(0, 2));
+    y = fromBytes<quint16>(array.mid(2, 2));
+    s = fromBytes<quint16>(array.mid(4, 2));
+
+    qDebug() << Q_FUNC_INFO << s << x << y;
 
     return true;
 }
