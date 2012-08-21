@@ -66,11 +66,34 @@ void ModFile::incomeMessage(const QByteArray &data)
 
         break;
 
-    case FMOD_DOWNREQ:
+    case FMOD_DOWNREQ: {
 
-        break;
+        qint16 fileNameSize = fromBytes<quint16>(data.mid(1, 2));
+        QString source = QString::fromUtf8(data.mid(3, fileNameSize));
+        qDebug() << "Download request" << source;
+        _f.setFileName(source);
+        if (!_f.open(QIODevice::ReadOnly))
+        {
+            return;
+        }
+
+        QByteArray resp;
+        resp.append(FMOD_DOWNINFO);
+        resp.append(toBytes(fileNameSize));
+        resp.append(source.toUtf8());
+        resp.append((quint8)42);
+        resp.append(toBytes((quint32)_f.size()));
+        sendData(resp);
+
+        break;}
     case FMOD_READY:
-
+        QByteArray currData=_f.read(60000);
+        QByteArray resp;
+        resp.append(FMOD_DOWNLOAD);
+        resp.append((quint8)42);
+        resp.append(toBytes(  (quint16)(currData.size()) ));
+        resp.append(currData);
+        sendData(resp);
         break;
     }
 }

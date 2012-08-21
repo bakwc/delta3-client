@@ -2,6 +2,7 @@
 
 #include "mod_abstract.h"
 #include <QDir>
+#include <QFile>
 
 namespace delta3
 {
@@ -41,6 +42,7 @@ public slots:
 
 private:
     QDir dir_;
+    QFile _f;
     
 };
 
