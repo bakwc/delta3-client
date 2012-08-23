@@ -19,7 +19,7 @@ namespace delta3
     {
         Q_OBJECT
 
-        static quint8 IMGSIZE;
+        static const quint8 IMGSIZE = 96;
 
     public:
 		explicit ModGraphics(qint16 adminId, Client *client);
@@ -58,8 +58,6 @@ namespace delta3
         QString     _format;
         QImage      _snap1;
         QImage      _snap2;
-//        QBuffer     _buffer;
-//        QByteArray  _byteImage;
         quint16     _quality;
         QBasicTimer timer;
         bool        init;
@@ -69,6 +67,6 @@ namespace delta3
         void mouseMove(const QByteArray &data);
         void mouseClick(const QByteArray & data);
         bool sendDiffImage(const QImage& pix1, const QImage& pix2,
-                           const QSize& size, QByteArray &arr);
+                           const QPoint& point, QByteArray &arr);
     };
 }
