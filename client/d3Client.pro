@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     mod_graph.cpp \
     mod_abstract.cpp \
     mod_proxy.cpp \
-    mod_file.cpp
+    mod_file.cpp \
+    graphmodvideo.cpp
 
 HEADERS += \
     client.h \
@@ -30,9 +31,14 @@ HEADERS += \
     utils.h \
     mod_abstract.h \
     mod_proxy.h \
-    mod_file.h
+    mod_file.h \
+    graphmodvideo.h
 
 
 FORMS    += UI/mainwindow.ui
 
 unix:LIBS += -lX11 -lXtst
+
+# FFMPEG
+DEFINES += __STDC_CONSTANT_MACROS
+LIBS += -lavcodec -lavformat -lavutil -lswscale
